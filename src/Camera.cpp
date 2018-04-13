@@ -19,6 +19,8 @@ void Camera::printCamera()
 	cout << "- Right: {" << right.x << " " << right.y << " " << right.z << "}" << endl;
 	cout << "- Look at: {" << lookat.x << " " << lookat.y << " " << lookat.z << "}" << endl;
 
+	cout << endl << "---" << endl << endl;
+
 }
 
 

@@ -3,7 +3,6 @@
 #include <fstream>
 #include <vector>
 #include "Parse.hpp"	
-#include "Lighting.hpp"
 using namespace std;
 using namespace glm;
 
@@ -124,10 +123,29 @@ Camera* Parse::placeCamera(ifstream &FileHandle)
 	return cam;
 }
 
+Lighting* Parse::lightInsertion(string line)
+{
+	Lighting* light = new Lighting;
+	vector<float> lVals;
+
+	lVals = Parse::getFloats(line);
+
+	if(lVals.size() > 6 || lVals.size() < 6)
+	{
+		cout << "Malformed lighting color in POV file." << endl;
+		return NULL;
+	}
+	light->location = vec3(lVals[0], lVals[1], lVals[2]);
+	light->color = vec3(lVals[3], lVals[4], lVals[5]);
+	
+	return light;
+}
+
 bool Parse::tokenParser(string fName)
 {
 	ifstream FileHandle("../resources/" + fName);
 	Camera *cam;
+	vector<Lighting *> allLights;
 
 	if(!FileHandle)
 	{
@@ -144,7 +162,6 @@ bool Parse::tokenParser(string fName)
 
 		fileString << holdBuf;
 		fileString >> token;
-		cout << fileString.str() << endl;
 
 		if(token != "")
 		{
@@ -158,7 +175,9 @@ bool Parse::tokenParser(string fName)
 			}
 			else if (token == "light_source")
 			{
-				
+				Lighting *light = lightInsertion(holdBuf);
+				allLights.push_back(light);
+				light->printLight();
 			}
 			else if (token == "plane")
 			{

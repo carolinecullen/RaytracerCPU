@@ -2,6 +2,7 @@
 #include <sstream>
 #include <glm/glm.hpp>
 #include "Camera.hpp"
+#include "Lighting.hpp"
 
 class Parse
 {
@@ -19,5 +20,7 @@ class Parse
 		static std::string tokenizeHelper(std::ifstream &, std::string &);
 
 		static std::vector<float> getFloats(std::string);
+
+		static Lighting* lightInsertion(std::string);
 
 };
