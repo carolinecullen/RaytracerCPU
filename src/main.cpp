@@ -1,60 +1,11 @@
 #include "Parse.hpp"
 #include <iostream>
 #include <glm/glm.hpp>
-#include <fstream>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 using namespace std;
 using namespace glm;
-
-
-vec3 cameraPos; 
-vec3 lightSource;
-
-void tokenParser(string fName)
-{
-
-	stringstream fileString;
-
-	ifstream FileHandle("../resources/" + fName);
-	string stringRead;
-
-	FileHandle.seekg(0, std::ios::end);
-	stringRead.reserve((uint) FileHandle.tellg());
-	FileHandle.seekg(0, std::ios::beg);
-	stringRead.assign((istreambuf_iterator<char>(FileHandle)), istreambuf_iterator<char>());
-
-	fileString.str() = stringRead;
-	fileString.seekg(0, ios::beg);
-
-	while(!fileString.eof())
-	{
-		string token;
-		fileString >> token;
-
-		printf("%s\n", token.c_str());
-
-		if (token == "sphere")
-		{
-			printf("sphere\n");
-		}
-		if (token == "light_source")
-		{
-			printf("sphere\n");
-		}
-		if (token == "plane")
-		{
-			printf("sphere\n");
-		}
-		else if (token.substr(0,2) == "//")
-		{
-			printf("comment\n");
-			string toss;
-			getline(fileString, toss);
-		}
-	}
-}
 
 int main(int argc, char** argv)
 {
@@ -74,7 +25,11 @@ int main(int argc, char** argv)
 			cout << "Invalid run commands: ./raytrace raycast <input_filename>" << endl;
 			return -1;
 		}
-		tokenParser(argv[2]);
+
+		if(!Parse::tokenParser(argv[2]))
+		{
+			return -1;
+		}
 
 	}
 	else if(strncmp(argv[1], "sceneinfo", 9) == 0)
