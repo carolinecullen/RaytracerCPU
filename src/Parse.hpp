@@ -1,9 +1,12 @@
 #include <string>
 #include <sstream>
 #include <glm/glm.hpp>
-#include <vector>
+// #include <vector>
 #include "Camera.hpp"
 #include "Lighting.hpp"
+#include "Sphere.hpp"
+
+using namespace std;
 
 class Parse
 {
@@ -20,8 +23,10 @@ class Parse
 
 		static std::string tokenizeHelper(std::ifstream &, std::string &);
 
-		static std::vector<float> getFloats(std::string);
+		static vector<float> getFloats(std::string);
 
 		static Lighting* lightInsertion(std::string);
+
+		static Sphere* sphereInsertion(std::ifstream &, std::string line);
 
 };

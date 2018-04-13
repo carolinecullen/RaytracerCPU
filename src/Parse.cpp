@@ -2,7 +2,8 @@
 #include <limits>
 #include <fstream>
 #include <vector>
-#include "Parse.hpp"	
+#include "Parse.hpp"
+#include "Sphere.hpp"	
 using namespace std;
 using namespace glm;
 
@@ -141,11 +142,69 @@ Lighting* Parse::lightInsertion(string line)
 	return light;
 }
 
+Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
+{
+	Sphere* s = new Sphere();
+	vector<float> sVals = Parse::getFloats(line);
+	s->center = vec3(sVals[0], sVals[1], sVals[2]);
+	s->radius = sVals[3];
+
+	string tok;
+	string buf;
+	while((tok = Parse::tokenizeHelper(FileHandle, buf)) != "}")
+	{
+		if(tok == "pigment")
+		{
+			vector<float> pVals;
+			pVals = Parse::getFloats(buf);
+
+			if(pVals.size() > 3 || pVals.size() < 3)
+			{
+				cout << "Malformed Camera location in POV file." << endl;
+				return NULL;
+			}
+			s->pigment = vec3(pVals[0], pVals[1], pVals[2]);
+		}
+
+		if(tok == "finish")
+		{
+			vector<float> fVals;
+			fVals = Parse::getFloats(buf);
+
+			if(fVals.size() > 2 || fVals.size() < 2)
+			{
+				cout << "Malformed Camera up in POV file." << endl;
+				return NULL;
+			}
+			s->ambient = fVals[0];
+			s->diffuse = fVals[0];
+		}
+
+		if(tok == "translate")
+		{
+			vector<float> tranVals;
+			tranVals = Parse::getFloats(buf);
+
+			if(tranVals.size() > 3 || tranVals.size() < 3)
+			{
+				cout << "Malformed Camera right in POV file." << endl;
+				return NULL;
+			}
+			s->translate = vec3(tranVals[0], tranVals[1], tranVals[2]);
+		}
+
+		buf = "";	
+	}
+
+	return s;
+}
+
 bool Parse::tokenParser(string fName)
 {
 	ifstream FileHandle("../resources/" + fName);
 	Camera *cam;
 	vector<Lighting *> allLights;
+	vector<Object *> Scene;
 
 	if(!FileHandle)
 	{
@@ -171,7 +230,9 @@ bool Parse::tokenParser(string fName)
 			}
 			else if (token == "sphere")
 			{
-				
+				Sphere *s = sphereInsertion(FileHandle, holdBuf);
+				Scene.push_back(s);
+				// s->printSphere();
 			}
 			else if (token == "light_source")
 			{

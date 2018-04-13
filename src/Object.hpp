@@ -1,3 +1,6 @@
+#ifndef OBJECT_H
+#define OBJECT_H
+
 #include <iostream>
 #include <string>
 #include <glm/glm.hpp>
@@ -8,7 +11,8 @@ class Object {
 public:
 
 	std::string type;
-	glm::vec3 finish;
+	float ambient;
+	float diffuse;
 	glm::vec3 pigment;
 
 	Object() {};
@@ -16,3 +20,5 @@ public:
 	virtual float intersect(const ray &r) = 0;
 
 };
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef RAY_H
+#define RAY_H
 #include <glm/glm.hpp>
 
 class ray {
@@ -11,3 +13,5 @@ class ray {
 		void createRay(const glm::vec3, const glm::vec3);
 
 };
+
+#endif

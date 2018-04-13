@@ -22,9 +22,9 @@ int main(int argc, char** argv)
 
 	if(strncmp(argv[1], "raycast", 7) == 0)
 	{
-		if(argc != 3)
+		if(argc != 5)
 		{
-			cout << "Invalid run commands: ./raytrace raycast <input_filename>" << endl;
+			cout << "Invalid run commands: ./raytrace raycast <input_filename> <width> <height>" << endl;
 			return -1;
 		}
 
