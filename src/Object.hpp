@@ -7,11 +7,12 @@ class Object {
 
 public:
 
-	string type;
+	std::string type;
 	glm::vec3 finish;
 	glm::vec3 pigment;
 
-	Object();
+	Object() {};
 
+	virtual float intersect(const ray &r) = 0;
 
 };
