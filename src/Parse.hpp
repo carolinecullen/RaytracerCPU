@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <glm/glm.hpp>
+#include <vector>
 #include "Camera.hpp"
 #include "Lighting.hpp"
 
