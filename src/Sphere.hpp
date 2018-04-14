@@ -15,7 +15,7 @@ public:
 
 	float intersect(const ray &r);
 	void createSphere(const glm::vec3, const float, const glm::vec3);
-	void printSphere();
+	void print();
 
 };
 

@@ -1,3 +1,6 @@
+#ifndef CAMERA_H
+#define CAMERA_H
+
 #include <string>
 #include <sstream>
 #include <glm/glm.hpp>
@@ -14,3 +17,5 @@ class Camera
 		Camera();
 		void printCamera();
 };
+
+#endif

@@ -18,6 +18,7 @@ public:
 	Object() {};
 
 	virtual float intersect(const ray &r) = 0;
+	virtual void print() = 0;
 
 };
 

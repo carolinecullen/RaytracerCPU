@@ -13,7 +13,7 @@ Camera::Camera()
 
 void Camera::printCamera()
 {
-	cout << "Camera" << endl;
+	cout << "Camera:" << endl;
 	cout << "- Location: {" << location.x << " " << location.y << " " << location.z << "}" << endl;
 	cout << "- Up: {" << up.x << " " << up.y << " " << up.z << "}" << endl;
 	cout << "- Right: {" << right.x << " " << right.y << " " << right.z << "}" << endl;

@@ -3,7 +3,8 @@
 #include <fstream>
 #include <vector>
 #include "Parse.hpp"
-#include "Sphere.hpp"	
+#include "Sphere.hpp"
+#include "Plane.hpp"	
 using namespace std;
 using namespace glm;
 
@@ -145,6 +146,7 @@ Lighting* Parse::lightInsertion(string line)
 Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 {
 	Sphere* s = new Sphere();
+	s->type = "Sphere";
 	vector<float> sVals = Parse::getFloats(line);
 	s->center = vec3(sVals[0], sVals[1], sVals[2]);
 	s->radius = sVals[3];
@@ -177,7 +179,7 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 				return NULL;
 			}
 			s->ambient = fVals[0];
-			s->diffuse = fVals[0];
+			s->diffuse = fVals[1];
 		}
 
 		if(tok == "translate")
@@ -199,12 +201,56 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 	return s;
 }
 
-bool Parse::tokenParser(string fName)
+Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
+{
+	Plane* p = new Plane();
+	p->type = "Plane";
+	vector<float> pVals = Parse::getFloats(line);
+	p->normal = vec3(pVals[0], pVals[1], pVals[2]);
+	p->distance = pVals[3];
+
+	string tok;
+	string buf;
+	while((tok = Parse::tokenizeHelper(FileHandle, buf)) != "}")
+	{
+		if(tok == "pigment")
+		{
+			vector<float> pVals;
+			pVals = Parse::getFloats(buf);
+
+			if(pVals.size() > 3 || pVals.size() < 3)
+			{
+				cout << "Malformed Camera location in POV file." << endl;
+				return NULL;
+			}
+			p->pigment = vec3(pVals[0], pVals[1], pVals[2]);
+		}
+
+		if(tok == "finish")
+		{
+			vector<float> fVals;
+			fVals = Parse::getFloats(buf);
+
+			if(fVals.size() > 2 || fVals.size() < 2)
+			{
+				cout << "Malformed Camera up in POV file." << endl;
+				return NULL;
+			}
+			p->ambient = fVals[0];
+			p->diffuse = fVals[1];
+		}
+		buf = "";	
+	}
+
+	return p;
+}
+
+bool Parse::tokenParser(string fName, Scene *scene)
 {
 	ifstream FileHandle("../resources/" + fName);
 	Camera *cam;
 	vector<Lighting *> allLights;
-	vector<Object *> Scene;
+	vector<Object *> objs;
 
 	if(!FileHandle)
 	{
@@ -231,23 +277,21 @@ bool Parse::tokenParser(string fName)
 			else if (token == "sphere")
 			{
 				Sphere *s = sphereInsertion(FileHandle, holdBuf);
-				Scene.push_back(s);
-				// s->printSphere();
+				objs.push_back(s);
 			}
 			else if (token == "light_source")
 			{
 				Lighting *light = lightInsertion(holdBuf);
 				allLights.push_back(light);
-				light->printLight();
 			}
 			else if (token == "plane")
 			{
-
+				Plane *plane = planeInsertion(FileHandle, holdBuf);
+				objs.push_back(plane);
 			}
 			else if (token == "camera")
 			{
 				cam = placeCamera(FileHandle);
-				cam->printCamera();
 			}
 		}
 
@@ -255,6 +299,9 @@ bool Parse::tokenParser(string fName)
 		holdBuf = "";
 	}
 
+	scene->cam = cam;
+	scene->lights = allLights;
+	scene->sceneObjects = objs;
 
 	return true;
 }

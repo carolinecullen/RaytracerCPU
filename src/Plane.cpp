@@ -19,7 +19,7 @@ void Plane::createPlane(vec3 n, float d)
 	this->normal = n;
 }
 
-void Plane::printPlane()
+void Plane::print()
 {
 	cout << "- Type: " <<  type << endl;
 	cout << "- Normal: {" << normal.x << " " << normal.y << " " << normal.z << "}" << endl;
@@ -27,5 +27,5 @@ void Plane::printPlane()
 	cout << "- Color: {" << pigment.x << " " << pigment.y << " " << pigment.z << "}" << endl;
 	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl;
 
-	cout << endl << "---" << endl << endl;
+	cout << endl;
 }

@@ -1,3 +1,6 @@
+#ifndef LIGHTING_H
+#define LIGHTING_H
+
 #include <string>
 #include <sstream>
 #include <glm/glm.hpp>
@@ -13,3 +16,5 @@ class Lighting
 		glm::vec3 location;
 
 };
+
+#endif

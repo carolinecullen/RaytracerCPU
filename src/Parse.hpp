@@ -5,6 +5,8 @@
 #include "Camera.hpp"
 #include "Lighting.hpp"
 #include "Sphere.hpp"
+#include "Scene.hpp"
+#include "Plane.hpp"
 
 using namespace std;
 
@@ -17,7 +19,7 @@ class Parse
 
 		// static members are independant of objects and can be called with the :: operator 
 
-		static bool tokenParser(std::string);
+		static bool tokenParser(std::string, Scene *);
 
 		static Camera* placeCamera(std::ifstream &);
 
@@ -27,6 +29,8 @@ class Parse
 
 		static Lighting* lightInsertion(std::string);
 
-		static Sphere* sphereInsertion(std::ifstream &, std::string line);
+		static Sphere* sphereInsertion(std::ifstream &, std::string);
+
+		static Plane* planeInsertion(std::ifstream &, std::string);
 
 };

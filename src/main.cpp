@@ -18,6 +18,8 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
+	Scene *s = new Scene();
+
 	// put file into a string 
 
 	if(strncmp(argv[1], "raycast", 7) == 0)
@@ -28,7 +30,7 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		if(!Parse::tokenParser(argv[2]))
+		if(!Parse::tokenParser(argv[2], s))
 		{
 			return -1;
 		}
@@ -41,12 +43,41 @@ int main(int argc, char** argv)
 			cout << "Invalid run commands: ./raytrace sceneinfo <input_filename>" << endl;
 			return -1;
 		}
+
+		if(!Parse::tokenParser(argv[2], s))
+		{
+			return -1;
+		}
+
+		s->cam->printCamera();
+		cout << s->lights.size() << " light(s)" << endl << endl;
+		int i = 0;
+		for(auto l: s->lights)
+		{
+			cout << "Light[" << i << "]:" << endl;
+			l->printLight();
+			i++;
+		}
+
+		cout << s->sceneObjects.size() << " objects(s)" << endl << endl;
+		i = 0;
+		for(auto so: s->sceneObjects)
+		{
+			cout << "Object[" << i << "]:" << endl;
+			so->print();
+			i++;
+		}
 	}
 	else if(strncmp(argv[1], "pixelray", 8) == 0)
 	{
 		if(argc != 7)
 		{
 			cout << "Invalid run commands: ./raytrace pixelray <input_filename> <width> <height> <x> <y>" << endl;
+			return -1;
+		}
+
+		if(!Parse::tokenParser(argv[2], s))
+		{
 			return -1;
 		}
 	}
@@ -57,13 +88,17 @@ int main(int argc, char** argv)
 			cout << "Invalid run commands: ./raytrace firsthit <input_filename> <width> <height> <x> <y>" << endl;
 			return -1;
 		}
+
+		if(!Parse::tokenParser(argv[2], s))
+		{
+			return -1;
+		}
 	}
 	else
 	{
 		cout << "Invalid command: use raycast, sceneinfo, pixelray, firsthit run with proper parameters." << endl;
 		return -1;
 	}
-
 
 
 }

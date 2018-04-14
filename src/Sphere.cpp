@@ -23,7 +23,7 @@ void Sphere::createSphere(vec3 c, float r, vec3 t)
 }
 
 
-void Sphere::printSphere()
+void Sphere::print()
 {
 	cout << "- Type: " <<  type << endl;
 	cout << "- Center: {" << center.x << " " << center.y << " " << center.z << "}" << endl;
@@ -31,5 +31,5 @@ void Sphere::printSphere()
 	cout << "- Color: {" << pigment.x << " " << pigment.y << " " << pigment.z << "}" << endl;
 	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl;
 
-	cout << endl << "---" << endl << endl;
+	cout << endl;
 }
