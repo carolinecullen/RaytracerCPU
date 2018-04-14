@@ -18,9 +18,10 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	Scene *s = new Scene();
+	cout << std::setiosflags(std::ios::fixed);
+   	cout << std::setprecision(4);
 
-	// put file into a string 
+	Scene *s = new Scene();
 
 	if(strncmp(argv[1], "raycast", 7) == 0)
 	{
@@ -59,7 +60,7 @@ int main(int argc, char** argv)
 			i++;
 		}
 
-		cout << s->sceneObjects.size() << " objects(s)" << endl << endl;
+		cout << s->sceneObjects.size() << " object(s)" << endl << endl;
 		i = 0;
 		for(auto so: s->sceneObjects)
 		{
@@ -105,8 +106,6 @@ int main(int argc, char** argv)
 
 // needed for precision and rounding in order to match dunns outputs
 
-// cout << std::setiosflags(std::ios::fixed);
-// cout << std::setprecision(4);
 // cout << "Pixel: [" << X << ", " << Y << "] Ray: " << Ray << endl;
 // unsigned int red = (unsigned int) std::round(color.r * 255.f);
 // unsigned int green = (unsigned int) std::round(color.g * 255.f);

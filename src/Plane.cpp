@@ -21,6 +21,7 @@ void Plane::createPlane(vec3 n, float d)
 
 void Plane::print()
 {
+
 	cout << "- Type: " <<  type << endl;
 	cout << "- Normal: {" << normal.x << " " << normal.y << " " << normal.z << "}" << endl;
 	cout << "- Distance: " << distance << endl;

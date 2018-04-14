@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include <glm/glm.hpp>
 #include "Ray.hpp"
 
