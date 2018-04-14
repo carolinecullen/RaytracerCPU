@@ -3,8 +3,7 @@
 #include <glm/glm.hpp>
 #include <stdio.h>
 #include <string.h>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "Tracer.hpp"
 
 using namespace std;
 using namespace glm;
@@ -35,6 +34,9 @@ int main(int argc, char** argv)
 		{
 			return -1;
 		}
+
+		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+		tracer->castRays();
 
 	}
 	else if(strncmp(argv[1], "sceneinfo", 9) == 0)
@@ -81,6 +83,8 @@ int main(int argc, char** argv)
 		{
 			return -1;
 		}
+
+
 	}
 	else if(strncmp(argv[1], "firsthit", 8) == 0)
 	{
@@ -106,7 +110,6 @@ int main(int argc, char** argv)
 
 // needed for precision and rounding in order to match dunns outputs
 
-// cout << "Pixel: [" << X << ", " << Y << "] Ray: " << Ray << endl;
 // unsigned int red = (unsigned int) std::round(color.r * 255.f);
 // unsigned int green = (unsigned int) std::round(color.g * 255.f);
 // unsigned int blue = (unsigned int) std::round(color.b * 255.f);

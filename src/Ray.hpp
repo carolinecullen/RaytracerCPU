@@ -11,6 +11,7 @@ class ray {
 
 		ray();
 		void createRay(const glm::vec3, const glm::vec3);
+		glm::vec3 calculate(float);
 
 };
 

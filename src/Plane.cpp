@@ -10,7 +10,13 @@ Plane::Plane()
 
 float Plane::intersect(const ray &r)
 {
-	return 1.0f;
+	float prod = dot(r.direction, normal);
+
+	cout << "Ray prod val: " << prod << endl;
+	float val = distance-dot(r.location, normal);
+	cout << "Ray val val: " << val << endl;
+
+	return val/prod;
 }
 
 void Plane::createPlane(vec3 n, float d)

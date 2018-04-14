@@ -13,3 +13,8 @@ void ray::createRay(vec3 location, vec3 direction)
 	this->location = location;
 	this->direction = direction;
 }
+
+vec3 ray::calculate(float t)
+{
+	return location + t * direction;
+}

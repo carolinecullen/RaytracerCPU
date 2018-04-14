@@ -1,0 +1,106 @@
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
+#include "stb_image_write.h"
+#include "Tracer.hpp"
+#include "Ray.hpp"
+
+using namespace std; 
+using namespace glm;
+
+Tracer::Tracer()
+{
+	this->scene = NULL;
+	this->width = 0;
+	this->height = 0;
+}
+
+Tracer::Tracer(Scene *s, int w, int h)
+{
+	this->scene = s;
+	this->width = w;
+	this->height = h;
+}
+
+void Tracer::castRays()
+{
+
+	const int numChannels = 3;
+ 	const glm::ivec2 size = glm::ivec2(width, height);
+ 	const string fileName = "output.png";
+	unsigned char *data = new unsigned char[size.x * size.y * numChannels];
+
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	while(j <= 480)
+	{
+		float pixelX = (float)((-0.5) + ((i + 0.5)/width));
+		float pixelY = (float)((-0.5) + ((j + 0.5)/height));
+
+		ray *r = new ray();
+		vec3 w = normalize(normalize(scene->cam->lookat) - normalize(scene->cam->location));
+		vec3 dir = normalize((pixelX * normalize(scene->cam->right)) + (pixelY * normalize(scene->cam->up)) + w);
+		r->createRay(scene->cam->location, dir);
+		// cout << "ray w vals: " << w.x << " " << w.y << " " << w.z << endl;
+		// cout << "ray dir vals: " << dir.x << " " << dir.y << " " << dir.z << endl;
+
+
+		float retVal = 1000;
+		for(auto so: scene->sceneObjects)
+		{
+			float hldVal;
+			hldVal = so->intersect(*r);
+
+			// cout << r->direction.x << " " << r->direction.y << endl;
+			cout << "hldval: " << hldVal << endl;
+			if(hldVal != 0)
+			{
+				if(hldVal < retVal)
+				{
+					retVal = hldVal;
+					data[(k * 3)] = (unsigned int) round(so->pigment.x * 255.f);
+					data[(k * 3)+1] = (unsigned int) round(so->pigment.y * 255.f);
+					data[(k * 3)+2] = (unsigned int) round(so->pigment.z * 255.f);
+
+					// cout << "dta: " << data[(k*3)] << endl;
+				}
+
+				// cout << so->type << endl;
+				// cout << "Pigment vals: " << so->pigment.x << " " << so->pigment.y << " " << so->pigment.z << endl;
+			}
+		}
+
+
+
+		if (retVal == 1000)
+		{
+			data[(k * 3)] = (unsigned int) round(0.0 * 255.f);
+			data[(k * 3)+1] = (unsigned int) round(0.0 * 255.f);
+			data[(k * 3)+2] = (unsigned int) round(0.0 * 255.f);
+		}
+
+		if(i < 640)
+		{
+			i++;
+		}
+		else if(i == 640)
+		{
+			i = 0;
+			j++;
+		}
+		k++;
+	}
+
+	// for(int i = 0; i < (size.x * size.y * numChannels); i++)
+	// {
+	// 	if(i%3 == 0)
+	// 	{
+	// 		cout << data[i] << " " << endl;
+	// 	}
+	// 	cout << data[i] << " ";
+	// }
+
+	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
+	// delete[] data;
+	
+}
