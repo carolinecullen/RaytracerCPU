@@ -38,22 +38,21 @@ void Tracer::castRays()
 		float pixelY = (float)((-0.5) + ((j + 0.5)/height));
 
 		ray *r = new ray();
-		vec3 w = normalize(normalize(scene->cam->lookat) - normalize(scene->cam->location));
-		vec3 dir = normalize((pixelX * normalize(scene->cam->right)) + (pixelY * normalize(scene->cam->up)) + w);
+		vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
+		vec3 dir = normalize((pixelX * scene->cam->right) + (pixelY * normalize(scene->cam->up)) + w);
 		r->createRay(scene->cam->location, dir);
-		// cout << "ray w vals: " << w.x << " " << w.y << " " << w.z << endl;
-		// cout << "ray dir vals: " << dir.x << " " << dir.y << " " << dir.z << endl;
 
 
 		float retVal = 1000;
 		for(auto so: scene->sceneObjects)
 		{
-			float hldVal;
+			float hldVal = -1;
+			cout << so->type << endl;
 			hldVal = so->intersect(*r);
 
 			// cout << r->direction.x << " " << r->direction.y << endl;
 			cout << "hldval: " << hldVal << endl;
-			if(hldVal != 0)
+			if(hldVal != 0 && hldVal != -1)
 			{
 				if(hldVal < retVal)
 				{
@@ -103,4 +102,47 @@ void Tracer::castRays()
 	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
 	// delete[] data;
 	
+}
+
+void Tracer::firstHit(float x, float y)
+{
+
+	ray *r = new ray();
+	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
+	vec3 dir = normalize((x * scene->cam->right) + (y * normalize(scene->cam->up)) + w);
+	r->createRay(scene->cam->location, dir);
+
+	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
+	cout << r->location.x << " " << r->location.y << " " << r->location.z << "} -> {";
+	cout << r->direction.x << " " << r->direction.y << " " << r->direction.z << "}" << endl;
+
+	Object *hit = NULL;
+	float retVal = 1000;
+	for(auto so: scene->sceneObjects)
+	{
+		float hldVal = -1;
+		hldVal = so->intersect(*r);
+
+		if(hldVal != 0 && hldVal != -1)
+		{
+			if(hldVal < retVal)
+			{
+				retVal = hldVal;
+				hit = so;
+			}
+
+		}
+	}
+
+	if(hit != NULL)
+	{
+		cout << "Object Type: " << hit->type << endl;
+		cout << "Color: " << hit->pigment.x << " " << hit->pigment.y << " " << hit->pigment.z << endl;
+	}
+	else
+	{
+		cout << "Not Hit" << endl;
+	}
+
+
 }
