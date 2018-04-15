@@ -15,8 +15,8 @@ class Tracer {
 		Tracer(Scene *, int, int);
 
 		void castRays();
-		void firstHit(float, float);
-		void pixelRay(float, float);
+		void firstHit(int, int);
+		void pixelRay(int, int);
 
 
 };

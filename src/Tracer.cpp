@@ -104,12 +104,12 @@ void Tracer::castRays()
 	
 }
 
-void Tracer::firstHit(float x, float y)
+void Tracer::firstHit(int x, int y)
 {
 
 	ray *r = new ray();
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-	vec3 dir = normalize((x * scene->cam->right) + (y * normalize(scene->cam->up)) + w);
+	vec3 dir = normalize(((float)x * scene->cam->right) + ((float)y * normalize(scene->cam->up)) + w);
 	r->createRay(scene->cam->location, dir);
 
 	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
@@ -147,12 +147,12 @@ void Tracer::firstHit(float x, float y)
 
 }
 
-void Tracer::pixelRay(float x, float y)
+void Tracer::pixelRay(int x, int y)
 {
 
 	ray *r = new ray();
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-	vec3 dir = normalize((x * scene->cam->right) + (y * normalize(scene->cam->up)) + w);
+	vec3 dir = normalize(((float)x * scene->cam->right) + ((float)y * normalize(scene->cam->up)) + w);
 	r->createRay(scene->cam->location, dir);
 
 	cout << "Pixel: [" << x << ", " << y << "] Ray: {";

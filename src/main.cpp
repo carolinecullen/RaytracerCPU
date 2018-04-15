@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 		}
 
 		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-		tracer->pixelRay(stof(argv[5]), stof(argv[6]));
+		tracer->pixelRay(stoi(argv[5]), stoi(argv[6]));
 
 
 	}
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 		}
 
 		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-		tracer->firstHit(stof(argv[5]), stof(argv[6]));
+		tracer->firstHit(stoi(argv[5]), stoi(argv[6]));
 	}
 	else
 	{
