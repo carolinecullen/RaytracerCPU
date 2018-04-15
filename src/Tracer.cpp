@@ -47,7 +47,6 @@ void Tracer::castRays()
 		for(auto so: scene->sceneObjects)
 		{
 			float hldVal = -1;
-			cout << so->type << endl;
 			hldVal = so->intersect(*r);
 
 			// cout << r->direction.x << " " << r->direction.y << endl;
