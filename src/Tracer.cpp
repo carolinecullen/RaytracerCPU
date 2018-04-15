@@ -146,3 +146,18 @@ void Tracer::firstHit(float x, float y)
 
 
 }
+
+void Tracer::pixelRay(float x, float y)
+{
+
+	ray *r = new ray();
+	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
+	vec3 dir = normalize((x * scene->cam->right) + (y * normalize(scene->cam->up)) + w);
+	r->createRay(scene->cam->location, dir);
+
+	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
+	cout << r->location.x << " " << r->location.y << " " << r->location.z << "} -> {";
+	cout << r->direction.x << " " << r->direction.y << " " << r->direction.z << "}" << endl;
+
+
+}

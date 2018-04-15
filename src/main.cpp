@@ -84,6 +84,9 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
+		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+		tracer->pixelRay(stof(argv[5]), stof(argv[6]));
+
 
 	}
 	else if(strncmp(argv[1], "firsthit", 8) == 0)

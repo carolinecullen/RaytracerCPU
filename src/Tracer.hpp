@@ -16,6 +16,7 @@ class Tracer {
 
 		void castRays();
 		void firstHit(float, float);
+		void pixelRay(float, float);
 
 
 };
