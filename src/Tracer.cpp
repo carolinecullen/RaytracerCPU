@@ -112,7 +112,7 @@ void Tracer::firstHit(int x, int y)
 	}
 	else
 	{
-		cout << "Not Hit" << endl;
+		cout << "No Hit" << endl;
 	}
 
 
