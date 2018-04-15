@@ -51,7 +51,7 @@ void Tracer::castRays()
 			hldVal = so->intersect(*r);
 
 			// cout << r->direction.x << " " << r->direction.y << endl;
-			cout << "hldval: " << hldVal << endl;
+			// cout << "hldval: " << hldVal << endl;
 			if(hldVal != 0 && hldVal != -1)
 			{
 				if(hldVal < retVal)
