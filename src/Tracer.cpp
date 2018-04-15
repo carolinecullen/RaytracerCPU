@@ -39,7 +39,7 @@ void Tracer::castRays()
 
 		ray *r = new ray();
 		vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-		vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * normalize(scene->cam->up)) + w*(1.0f));
+		vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 		r->createRay(scene->cam->location, dir);
 
 
@@ -113,7 +113,7 @@ void Tracer::firstHit(int x, int y)
 
 	ray *r = new ray();
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * normalize(scene->cam->up)) + w*(1.0f));
+	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 	r->createRay(scene->cam->location, dir);
 
 	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
@@ -121,11 +121,13 @@ void Tracer::firstHit(int x, int y)
 	cout << r->direction.x << " " << r->direction.y << " " << r->direction.z << "}" << endl;
 
 	Object *hit = NULL;
-	float retVal = 1000;
+	float retVal = 100000000000;
 	float hldVal = -1;
 	for(auto so: scene->sceneObjects)
 	{
 		hldVal = so->intersect(*r);
+		// cout << so->type << endl;
+		// cout << hldVal << endl;
 
 		if(hldVal > 0)
 		{
@@ -140,7 +142,7 @@ void Tracer::firstHit(int x, int y)
 
 	if(hit != NULL)
 	{
-		cout << "T= " << retVal << endl;
+		cout << "T = " << retVal << endl;
 		cout << "Object Type: " << hit->type << endl;
 		cout << "Color: " << hit->pigment.x << " " << hit->pigment.y << " " << hit->pigment.z << endl;
 	}

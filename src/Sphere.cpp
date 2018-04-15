@@ -12,41 +12,38 @@ Sphere::Sphere()
 
 float Sphere::intersect(const ray &r)
 {
-	vec3 distance = center - r.location;
+	vec3 distance = r.location - center;
 
-	float A = dot(r.location, r.location);
-	float B = dot(r.location + r.location, distance);
-	float C = dot(distance, distance) - (radius * radius);
-
-	float discriminant = (pow(B, 2.0))-(4*(A*C));
+	float A = dot(r.direction, r.direction);
+	float B = 2*dot(distance, r.direction);
+	float C = dot(distance, distance) - (pow(radius, 2.0));
+	float discriminant = (pow(B, 2))-(4*(A*C));
 	discriminant = sqrt(discriminant);
 
-	float val1 = (-B + discriminant)/(2*A);
-	float val2 = (-B - discriminant)/(2*A);
-
-	// cout << "val1: " << val1 << endl;
-	// cout << "val2: " << val2 << endl;
-
-	if (val2>0 && val1>0) 
+	if (discriminant > 0) 
 	{
+
+		float val1 = (-B + discriminant)/(2*A);
+		float val2 = (-B - discriminant)/(2*A);
 		if(val2>val1)
-		{
-			return val2;
-		}
-		else
 		{
 			return val1;
 		}
+		else
+		{
+			return val2;
+		}
 	}
-	else if (val2>0) 
+	else if (discriminant==0) 
 	{
-		return val2;
-	}
-	else if (val1>0) 
-	{
+		float val1 = (-B + discriminant)/(2*A);
 		return val1;
 	}
-	else if(val1 < 0 || val2 < 0)
+	else if(discriminant < 0)
+	{
+		return -1;
+	}
+	else
 	{
 		return -1;
 	}
