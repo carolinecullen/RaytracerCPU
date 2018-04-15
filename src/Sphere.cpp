@@ -46,7 +46,7 @@ float Sphere::intersect(const ray &r)
 	{
 		return val1;
 	}
-	else
+	else if(val1 < 0 || val2 < 0)
 	{
 		return -1;
 	}

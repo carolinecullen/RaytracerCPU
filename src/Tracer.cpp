@@ -39,22 +39,24 @@ void Tracer::castRays()
 
 		ray *r = new ray();
 		vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-		vec3 dir = normalize(normalize(pixelX * scene->cam->right) + (pixelY * normalize(scene->cam->up)) + w*(1.0f));
+		vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * normalize(scene->cam->up)) + w*(1.0f));
 		r->createRay(scene->cam->location, dir);
 
 
 		float retVal = 1000;
+		float hldVal = -1;
 		for(auto so: scene->sceneObjects)
 		{
-			float hldVal = -1;
+			
 			hldVal = so->intersect(*r);
 
-			// cout << r->direction.x << " " << r->direction.y << endl;
-			// cout << "hldval: " << hldVal << endl;
-			if(hldVal != 0 && hldVal != -1)
+			cout << so->type << endl;
+			cout << "hldval: " << hldVal << endl;
+			if(hldVal > 0)
 			{
 				if(hldVal < retVal)
 				{
+					cout << "pig set" << endl;
 					retVal = hldVal;
 					data[(k * 3)] = (unsigned int) round(so->pigment.x * 255.f);
 					data[(k * 3)+1] = (unsigned int) round(so->pigment.y * 255.f);
@@ -63,14 +65,14 @@ void Tracer::castRays()
 					// cout << "dta: " << data[(k*3)] << endl;
 				}
 
-				// cout << so->type << endl;
+				
 				// cout << "Pigment vals: " << so->pigment.x << " " << so->pigment.y << " " << so->pigment.z << endl;
 			}
 		}
 
 
 
-		if (retVal == 1000)
+		if (hldVal == -1)
 		{
 			data[(k * 3)] = (unsigned int) round(0.0 * 255.f);
 			data[(k * 3)+1] = (unsigned int) round(0.0 * 255.f);
@@ -120,12 +122,12 @@ void Tracer::firstHit(int x, int y)
 
 	Object *hit = NULL;
 	float retVal = 1000;
+	float hldVal = -1;
 	for(auto so: scene->sceneObjects)
 	{
-		float hldVal = -1;
 		hldVal = so->intersect(*r);
 
-		if(hldVal != 0 && hldVal != -1)
+		if(hldVal > 0)
 		{
 			if(hldVal < retVal)
 			{
@@ -138,6 +140,7 @@ void Tracer::firstHit(int x, int y)
 
 	if(hit != NULL)
 	{
+		cout << "T= " << retVal << endl;
 		cout << "Object Type: " << hit->type << endl;
 		cout << "Color: " << hit->pigment.x << " " << hit->pigment.y << " " << hit->pigment.z << endl;
 	}

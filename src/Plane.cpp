@@ -13,7 +13,7 @@ float Plane::intersect(const ray &r)
 	float prod = dot(r.direction, normal);
 	float val = distance-dot(r.location, normal);
 
-	if(prod == 0)
+	if(prod == 0 || prod < 0)
 	{
 		return -1;
 	}
