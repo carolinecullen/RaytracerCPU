@@ -39,7 +39,7 @@ void Tracer::castRays()
 
 		ray *r = new ray();
 		vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-		vec3 dir = normalize((pixelX * scene->cam->right) + (pixelY * normalize(scene->cam->up)) + w);
+		vec3 dir = normalize(normalize(pixelX * scene->cam->right) + (pixelY * normalize(scene->cam->up)) + w*(1.0f));
 		r->createRay(scene->cam->location, dir);
 
 
@@ -107,9 +107,12 @@ void Tracer::castRays()
 void Tracer::firstHit(int x, int y)
 {
 
+	float pixelX = (float)((-0.5) + ((x + 0.5)/width));
+	float pixelY = (float)((-0.5) + ((y + 0.5)/height));
+
 	ray *r = new ray();
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-	vec3 dir = normalize(((float)x * scene->cam->right) + ((float)y * normalize(scene->cam->up)) + w);
+	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * normalize(scene->cam->up)) + w*(1.0f));
 	r->createRay(scene->cam->location, dir);
 
 	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
@@ -150,9 +153,12 @@ void Tracer::firstHit(int x, int y)
 void Tracer::pixelRay(int x, int y)
 {
 
+	float pixelX = (float)((-0.5) + ((x + 0.5)/width));
+	float pixelY = (float)((-0.5) + ((y + 0.5)/height));
+
 	ray *r = new ray();
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-	vec3 dir = normalize(((float)x * scene->cam->right) + ((float)y * normalize(scene->cam->up)) + w);
+	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 	r->createRay(scene->cam->location, dir);
 
 	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
