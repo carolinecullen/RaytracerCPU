@@ -23,7 +23,15 @@ Tracer::Tracer(Scene *s, int w, int h)
 
 vec3 Tracer::getColor(ray *r, Object* obj, float t)
 {
+	vec3 pt = r->calculate(t);
+	vec3 outcolor = obj->pigment * obj->ambient;
 
+	for(auto l: scene->lights)
+	{
+		bool inShadow = false;
+
+
+	}
 }
 
 void Tracer::traceRays()
@@ -201,14 +209,14 @@ void Tracer::firstHit(int x, int y, bool flag, ray *r, unsigned char* data)
 
 		if(flag)
 		{
-			cout << "Color: (" << hit->pigment.x << ", " << hit->pigment.y << ", " << hit->pigment.z << ")" << endl;
+			cout << "Color: " << hit->pigment.x << " " << hit->pigment.y << " " << hit->pigment.z << endl;
 		}
 		else
 		{
 			cout << "BRDF: Blinn-Phong" << endl;
 			// cout << "data " << static_cast<unsigned>(data[0]) <<endl;
 
-			cout << "Color: " << static_cast<unsigned>(data[0]) << " " << static_cast<unsigned>(data[1]) << " " << static_cast<unsigned>(data[2]) << endl;
+			cout << "Color: (" << static_cast<unsigned>(data[0]) << ", " << static_cast<unsigned>(data[1]) << ", " << static_cast<unsigned>(data[2]) << ")" << endl;
 		}
 	}
 	else
