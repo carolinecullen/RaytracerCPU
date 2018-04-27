@@ -21,17 +21,90 @@ Tracer::Tracer(Scene *s, int w, int h)
 	this->height = h;
 }
 
+float Tracer::checkForIntersection(vec3 pt, vec3 lRay)
+{
+	float hldVal = -1;
+	float retVal = numeric_limits<float>::max();
+	for(auto so: scene->sceneObjects)
+	{
+		ray *testRay = new ray();
+		testRay->createRay(pt, lRay);
+		hldVal = so->intersect(*testRay);
+		if(hldVal > 0)
+		{
+			if(hldVal < retVal)
+			{
+				retVal = hldVal;
+			}
+
+		}
+	}
+
+	if(hldVal == -1)
+	{
+		return -1;
+	}
+	else
+	{
+		return retVal;
+	}
+}
+
+float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec)
+{
+	vec3 viewvec = normalize(scene->cam->location - pt);
+	vec3 halfvec = normalize(lightvec + viewvec);
+	
+	vec3 normal = pt;
+
+	float dotprod = clamp(dot(halfvec, normal), 0.f, 1.f);
+	float hldval = pow(dotprod, obj->roughness);
+
+	float outspec = (obj->specular * hldval);
+
+	cout << "ks: " << obj->specular << endl;
+	cout << "roughness: " << obj->roughness << endl;
+	cout << "otuspec: " << outspec << endl;
+
+	return outspec;
+}
+
+float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec)
+{
+	vec3 normal = pt;
+	float diff = clamp((obj->diffuse * (dot(normal, lightvec))), 0.f, 1.f);
+
+	return diff;
+}
+
 vec3 Tracer::getColor(ray *r, Object* obj, float t)
 {
-	vec3 pt = r->calculate(t);
+	vec3 pt = r->calculate(t)+0.001f;
 	vec3 outcolor = obj->pigment * obj->ambient;
+	float val = numeric_limits<float>::max();;
 
 	for(auto l: scene->lights)
 	{
 		bool inShadow = false;
 
+		vec3 lightvec = normalize(l->location - pt);
+		val = checkForIntersection(pt, lightvec);
 
+		if (val < length((l->location) - pt))
+		{
+			inShadow = true;
+		}
+
+		if(!inShadow)
+		{
+			// outcolor = obj->pigment;
+			outcolor += computeDiffuse(pt, obj, lightvec) * obj->pigment;
+			// outcolor += (computeDiffuse(pt, obj, lightvec)* obj->pigment *l->color);
+			outcolor += computeSpecular(pt, obj, lightvec) * obj->pigment;
+		}
 	}
+
+	return outcolor;
 }
 
 void Tracer::traceRays()
@@ -68,10 +141,9 @@ void Tracer::traceRays()
 						retVal = hldVal;
 
 						vec3 color = getColor(r, so, retVal);
-						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = color.x;
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = color.y;
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = color.z;
-						
+						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round(color.x * 255.f);
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round(color.y * 255.f);
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round(color.z * 255.f);
 					}
 
 				}
@@ -105,17 +177,16 @@ void Tracer::pixelColor(int x, int y)
 			if(hldVal < retVal)
 			{
 				retVal = hldVal;
-				data[0] = (unsigned int) round(so->pigment.x * 255.f);
-		        data[1] = (unsigned int) round(so->pigment.y * 255.f);
-		        data[2] = (unsigned int) round(so->pigment.z * 255.f);
+				vec3 color = getColor(r, so, retVal);
+				data[0] = (unsigned int) round(color.x * 255.f);
+		        data[1] = (unsigned int) round(color.y * 255.f);
+		        data[2] = (unsigned int) round(color.z * 255.f);
 			}
 
 		}
 	}
 	
-	// cout << "data " << static_cast<unsigned>(data[0]) <<endl;
 	firstHit(x, y, false, r, data);
-
 }
 
 void Tracer::castRays()

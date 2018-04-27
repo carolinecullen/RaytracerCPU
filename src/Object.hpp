@@ -14,6 +14,8 @@ public:
 	std::string type;
 	float ambient;
 	float diffuse;
+	float specular;
+	float roughness;
 	glm::vec3 pigment;
 
 	Object() {};

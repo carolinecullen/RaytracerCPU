@@ -157,15 +157,15 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 	{
 		if(tok == "pigment")
 		{
-			vector<float> pVals;
-			pVals = Parse::getFloats(buf);
+			vector<float> sVals;
+			sVals = Parse::getFloats(buf);
 
-			if(pVals.size() > 3 || pVals.size() < 3)
+			if(sVals.size() > 3 || sVals.size() < 3)
 			{
-				cout << "Malformed Camera location in POV file." << endl;
+				cout << "Malformed sphere pigment in POV file." << endl;
 				return NULL;
 			}
-			s->pigment = vec3(pVals[0], pVals[1], pVals[2]);
+			s->pigment = vec3(sVals[0], sVals[1], sVals[2]);
 		}
 
 		if(tok == "finish")
@@ -173,13 +173,30 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 			vector<float> fVals;
 			fVals = Parse::getFloats(buf);
 
-			if(fVals.size() > 2 || fVals.size() < 2)
+			if(fVals.size() == 2)
 			{
-				cout << "Malformed Camera up in POV file." << endl;
+				s->ambient = fVals[0];
+				s->diffuse = fVals[1];
+			}
+			else if(fVals.size() == 3)
+			{
+				s->ambient = fVals[0];
+				s->diffuse = fVals[1];
+				s->specular = fVals[2];
+			}
+			else if(fVals.size() == 4)
+			{
+				s->ambient = fVals[0];
+				s->diffuse = fVals[1];
+				s->specular = fVals[2];
+				s->specular = fVals[3];
+			}
+			else
+			{
+				cout << "Malformed sphere finish in POV file." << endl;
 				return NULL;
 			}
-			s->ambient = fVals[0];
-			s->diffuse = fVals[1];
+			
 		}
 
 		if(tok == "translate")
@@ -189,7 +206,7 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 
 			if(tranVals.size() > 3 || tranVals.size() < 3)
 			{
-				cout << "Malformed Camera right in POV file." << endl;
+				cout << "Malformed Camera translate in POV file." << endl;
 				return NULL;
 			}
 			s->translate = vec3(tranVals[0], tranVals[1], tranVals[2]);
@@ -220,7 +237,7 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 
 			if(pVals.size() > 3 || pVals.size() < 3)
 			{
-				cout << "Malformed Camera location in POV file." << endl;
+				cout << "Malformed Plane Pigment in POV file." << endl;
 				return NULL;
 			}
 			p->pigment = vec3(pVals[0], pVals[1], pVals[2]);
@@ -228,16 +245,32 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 
 		if(tok == "finish")
 		{
-			vector<float> fVals;
-			fVals = Parse::getFloats(buf);
+			vector<float> pVals;
+			pVals = Parse::getFloats(buf);
 
-			if(fVals.size() > 2 || fVals.size() < 2)
+			if(pVals.size() == 2)
 			{
-				cout << "Malformed Camera up in POV file." << endl;
+				p->ambient = pVals[0];
+				p->diffuse = pVals[1];
+			}
+			else if(pVals.size() == 3)
+			{
+				p->ambient = pVals[0];
+				p->diffuse = pVals[1];
+				p->specular = pVals[2];
+			}
+			else if(pVals.size() == 4)
+			{
+				p->ambient = pVals[0];
+				p->diffuse = pVals[1];
+				p->specular = pVals[2];
+				p->specular = pVals[3];
+			}
+			else
+			{
+				cout << "Malformed Plane Finish in POV file." << endl;
 				return NULL;
 			}
-			p->ambient = fVals[0];
-			p->diffuse = fVals[1];
 		}
 		buf = "";	
 	}

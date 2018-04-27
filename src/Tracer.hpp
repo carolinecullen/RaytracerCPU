@@ -18,9 +18,11 @@ class Tracer {
 		void traceRays();
 		void firstHit(int, int, bool, ray *, unsigned char *);
 		void pixelRay(int, int);
-		glm::vec3 getColor(ray*, unsigned char*, glm::vec3, glm::vec3);
 		glm::vec3 getColor(ray *, Object*, float);
+		float checkForIntersection(glm::vec3, glm::vec3);
 		void pixelColor(int, int);
+		float computeDiffuse(glm::vec3, Object*, glm::vec3);
+		float computeSpecular(glm::vec3, Object*, glm::vec3);
 
 };
 
