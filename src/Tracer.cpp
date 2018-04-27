@@ -111,7 +111,11 @@ vec3 Tracer::getColor(ray *r, Object* obj, float t)
 		bool inShadow = false;
 
 		vec3 lightvec = normalize(l->location - pt);
-		val = checkForIntersection(pt + 0.001f, lightvec);
+
+		ray *testRay = new ray();
+		testRay->createRay(pt, lightvec);
+
+		val = checkForIntersection(pt + 0.001f*testRay->direction, lightvec);
 
 		if(val != -1)
 		{
