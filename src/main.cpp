@@ -19,10 +19,10 @@ int main(int argc, char** argv)
 
 	cout << std::setiosflags(std::ios::fixed);
    	cout << std::setprecision(4);
-
+   	
 	Scene *s = new Scene();
 
-	if(strncmp(argv[1], "raycast", 7) == 0)
+	if(strcmp(argv[1], "raycast") == 0)
 	{
 		if(argc != 5)
 		{
@@ -37,9 +37,8 @@ int main(int argc, char** argv)
 
 		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
 		tracer->castRays();
-
 	}
-	else if(strncmp(argv[1], "sceneinfo", 9) == 0)
+	else if(strcmp(argv[1], "sceneinfo") == 0)
 	{
 		if(argc != 3)
 		{
@@ -71,7 +70,7 @@ int main(int argc, char** argv)
 			i++;
 		}
 	}
-	else if(strncmp(argv[1], "pixelray", 8) == 0)
+	else if(strcmp(argv[1], "pixelray") == 0)
 	{
 		if(argc != 7)
 		{
@@ -86,10 +85,8 @@ int main(int argc, char** argv)
 
 		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
 		tracer->pixelRay(stoi(argv[5]), stoi(argv[6]));
-
-
 	}
-	else if(strncmp(argv[1], "firsthit", 8) == 0)
+	else if(strcmp(argv[1], "firsthit") == 0)
 	{
 		if(argc != 7)
 		{
@@ -103,7 +100,47 @@ int main(int argc, char** argv)
 		}
 
 		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-		tracer->firstHit(stoi(argv[5]), stoi(argv[6]));
+		ray * r= NULL;
+		unsigned char * c= NULL;
+		tracer->firstHit(stoi(argv[5]), stoi(argv[6]), true, r, c);
+	}
+	else if(strcmp(argv[1], "render") == 0)
+	{
+		if(argc == 6 || argc == 5)
+		{
+			if(!Parse::tokenParser(argv[2], s))
+			{
+				return -1;
+			}
+
+			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+			tracer->traceRays();
+		}
+		else
+		{
+			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height>" << endl;
+			return -1;
+		}
+	}
+	else if(strcmp(argv[1], "pixelcolor") == 0)
+	{
+		if(argc == 8 || argc == 7)
+		{
+			if(!Parse::tokenParser(argv[2], s))
+			{
+				return -1;
+			}
+
+			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+			tracer->pixelColor(stoi(argv[5]), stoi(argv[6]));
+		}
+		else
+		{
+			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height> <x> <y>" << endl;
+			return -1;
+		}
+
+		
 	}
 	else
 	{

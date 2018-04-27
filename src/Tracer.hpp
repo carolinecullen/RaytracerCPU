@@ -15,9 +15,11 @@ class Tracer {
 		Tracer(Scene *, int, int);
 
 		void castRays();
-		void firstHit(int, int);
+		void traceRays();
+		void firstHit(int, int, bool, ray *, unsigned char *);
 		void pixelRay(int, int);
-
+		glm::vec3 getColor(ray *, Object*, float);
+		void pixelColor(int, int);
 
 };
 
