@@ -18,6 +18,7 @@ class Tracer {
 		void traceRays();
 		void firstHit(int, int, bool, ray *, unsigned char *);
 		void pixelRay(int, int);
+		glm::vec3 getColor(ray*, unsigned char*, glm::vec3, glm::vec3);
 		glm::vec3 getColor(ray *, Object*, float);
 		void pixelColor(int, int);
 

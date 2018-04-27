@@ -21,6 +21,11 @@ Tracer::Tracer(Scene *s, int w, int h)
 	this->height = h;
 }
 
+vec3 Tracer::getColor(ray *r, Object* obj, float t)
+{
+
+}
+
 void Tracer::traceRays()
 {
 
@@ -53,9 +58,11 @@ void Tracer::traceRays()
 					if(hldVal < retVal)
 					{
 						retVal = hldVal;
-						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round(so->pigment.x * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round(so->pigment.y * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round(so->pigment.z * 255.f);
+
+						vec3 color = getColor(r, so, retVal);
+						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = color.x;
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = color.y;
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = color.z;
 						
 					}
 
@@ -65,7 +72,6 @@ void Tracer::traceRays()
 	}
 
 	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
-	// delete[] data;
 	
 }
 
@@ -195,7 +201,7 @@ void Tracer::firstHit(int x, int y, bool flag, ray *r, unsigned char* data)
 
 		if(flag)
 		{
-			cout << "Color: " << hit->pigment.x << " " << hit->pigment.y << " " << hit->pigment.z << endl;
+			cout << "Color: (" << hit->pigment.x << ", " << hit->pigment.y << ", " << hit->pigment.z << ")" << endl;
 		}
 		else
 		{
