@@ -57,25 +57,23 @@ float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec)
 	vec3 viewvec = normalize(scene->cam->location - pt);
 	vec3 halfvec = normalize(lightvec + viewvec);
 	vec3 normal;
-	// if(obj->type == "Plane")
-	// {
-	// 	Plane * pPtr = (Plane *) obj;
-	// 	normal = pPtr->normal;
-	// }
-	// else
-	// {
-		normal = pt;
-	// }
+	if(obj->type == "Plane")
+	{
+		Plane * pPtr = (Plane *) obj;
+		normal = pPtr->normal;
+	}
+	else
+	{
+		Sphere * sPtr = (Sphere *) obj;
+		normal = pt - sPtr->center;
+	}
 
-	float dotprod = clamp(dot(halfvec, normal), 0.f, 1.f);
-	float hldval = pow(dotprod, obj->roughness);
+	float dotprod = clamp(dot(halfvec, normalize(normal)), 0.f, 1.f);
+
+	float alpha = (2/(pow(obj->roughness, 2)))-2;
+	float hldval = pow(dotprod, alpha);
 
 	float outspec = (obj->specular * hldval);
-
-	cout << "ks: " << obj->specular << endl;
-	cout << "roughness: " << obj->roughness << endl;
-	cout << "otuspec: " << outspec << endl;
-
 	return outspec;
 }
 
@@ -103,7 +101,7 @@ vec3 Tracer::getColor(ray *r, Object* obj, float t)
 {
 	// vec3 pt = r->calculate(t)+0.001f;
 	vec3 pt = r->location+ r->direction*t;
-	pt+=0.001f;
+	// pt+=0.001f;
 	//r->calculate(t)+0.001f;
 	vec3 outcolor = obj->pigment * obj->ambient;
 	float val = numeric_limits<float>::max();
@@ -113,7 +111,7 @@ vec3 Tracer::getColor(ray *r, Object* obj, float t)
 		bool inShadow = false;
 
 		vec3 lightvec = normalize(l->location - pt);
-		val = checkForIntersection(pt, lightvec);
+		val = checkForIntersection(pt + 0.001f, lightvec);
 
 		if(val != -1)
 		{
@@ -129,7 +127,7 @@ vec3 Tracer::getColor(ray *r, Object* obj, float t)
 			// outcolor = obj->pigment;
 			// outcolor += computeDiffuse(pt, obj, lightvec) * obj->pigment;
 			outcolor += (computeDiffuse(pt, obj, lightvec)* obj->pigment *l->color);
-			// outcolor += computeSpecular(pt, obj, lightvec) * obj->pigment;
+			outcolor += (computeSpecular(pt, obj, lightvec) * obj->pigment *l->color);
 		}
 	}
 

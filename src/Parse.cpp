@@ -173,6 +173,11 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 			vector<float> fVals;
 			fVals = Parse::getFloats(buf);
 
+			s->ambient = 0.f;
+			s->diffuse = 0.f;
+			s->specular = 0.f;
+			s->roughness = 0.f;
+
 			if(fVals.size() == 2)
 			{
 				s->ambient = fVals[0];
@@ -189,14 +194,14 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 				s->ambient = fVals[0];
 				s->diffuse = fVals[1];
 				s->specular = fVals[2];
-				s->specular = fVals[3];
+				s->roughness = fVals[3];
 			}
 			else if(fVals.size() == 5)
 			{
 				s->ambient = fVals[0];
 				s->diffuse = fVals[1];
 				s->specular = fVals[2];
-				s->specular = fVals[3];
+				s->roughness = fVals[3];
 				s->ior = fVals[4];
 			}
 			else
@@ -256,6 +261,11 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 			vector<float> pVals;
 			pVals = Parse::getFloats(buf);
 
+			p->ambient = 0.f;
+			p->diffuse = 0.f;
+			p->specular = 0.f;
+			p->roughness = 0.f;
+
 			if(pVals.size() == 2)
 			{
 				p->ambient = pVals[0];
@@ -272,7 +282,7 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 				p->ambient = pVals[0];
 				p->diffuse = pVals[1];
 				p->specular = pVals[2];
-				p->specular = pVals[3];
+				p->roughness = pVals[3];
 			}
 			else
 			{
