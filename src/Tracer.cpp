@@ -4,6 +4,7 @@
 #include "Tracer.hpp"
 #include "Ray.hpp"
 #include "Plane.hpp"
+#include "Sphere.hpp"
 
 using namespace std; 
 using namespace glm;
@@ -56,20 +57,25 @@ float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec)
 	vec3 viewvec = normalize(scene->cam->location - pt);
 	vec3 halfvec = normalize(lightvec + viewvec);
 	vec3 normal;
-	if(obj->type == "Plane")
-	{
-		Plane * pPtr = (Plane *) obj;
-		normal = pPtr->normal;
-	}
-	else
-	{
+	// if(obj->type == "Plane")
+	// {
+	// 	Plane * pPtr = (Plane *) obj;
+	// 	normal = pPtr->normal;
+	// }
+	// else
+	// {
 		normal = pt;
-	}
+	// }
 
 	float dotprod = clamp(dot(halfvec, normal), 0.f, 1.f);
 	float hldval = pow(dotprod, obj->roughness);
 
 	float outspec = (obj->specular * hldval);
+
+	cout << "ks: " << obj->specular << endl;
+	cout << "roughness: " << obj->roughness << endl;
+	cout << "otuspec: " << outspec << endl;
+
 	return outspec;
 }
 
@@ -84,9 +90,10 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec)
 	}
 	else
 	{
-		normal = pt;
+		Sphere * sPtr = (Sphere *) obj;
+		normal = pt - sPtr->center;
 	}
-	float dotprod = clamp((dot(normal, lightvec)), 0.f, 1.f);
+	float dotprod = clamp((dot(normalize(normal), lightvec)), 0.f, 1.f);
 	float diff = obj->diffuse * dotprod;
 
 	return diff;
@@ -94,9 +101,12 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec)
 
 vec3 Tracer::getColor(ray *r, Object* obj, float t)
 {
-	vec3 pt = r->calculate(t)+0.001f;
+	// vec3 pt = r->calculate(t)+0.001f;
+	vec3 pt = r->location+ r->direction*t;
+	pt+=0.001f;
+	//r->calculate(t)+0.001f;
 	vec3 outcolor = obj->pigment * obj->ambient;
-	float val = numeric_limits<float>::max();;
+	float val = numeric_limits<float>::max();
 
 	for(auto l: scene->lights)
 	{
@@ -105,17 +115,21 @@ vec3 Tracer::getColor(ray *r, Object* obj, float t)
 		vec3 lightvec = normalize(l->location - pt);
 		val = checkForIntersection(pt, lightvec);
 
-		if (val < length((l->location) - pt))
+		if(val != -1)
 		{
-			inShadow = true;
+			if (val < length((l->location) - pt))
+			{
+				inShadow = true;
+			}
 		}
+		
 
 		if(!inShadow)
 		{
 			// outcolor = obj->pigment;
-			outcolor += computeDiffuse(pt, obj, lightvec) * obj->pigment;
-			// outcolor += (computeDiffuse(pt, obj, lightvec)* obj->pigment *l->color);
-			outcolor += computeSpecular(pt, obj, lightvec) * obj->pigment;
+			// outcolor += computeDiffuse(pt, obj, lightvec) * obj->pigment;
+			outcolor += (computeDiffuse(pt, obj, lightvec)* obj->pigment *l->color);
+			// outcolor += computeSpecular(pt, obj, lightvec) * obj->pigment;
 		}
 	}
 

@@ -12,8 +12,6 @@ Sphere::Sphere()
 	this->specular = 0.f;
 	this->ambient = 0.f;
 	this->diffuse = 0.f;
-
-
 }
 
 float Sphere::intersect(const ray &r)
