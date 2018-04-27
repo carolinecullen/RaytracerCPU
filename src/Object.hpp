@@ -17,6 +17,7 @@ public:
 	float specular;
 	float roughness;
 	glm::vec3 pigment;
+	float ior;
 
 	Object() {};
 

@@ -191,6 +191,14 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 				s->specular = fVals[2];
 				s->specular = fVals[3];
 			}
+			else if(fVals.size() == 5)
+			{
+				s->ambient = fVals[0];
+				s->diffuse = fVals[1];
+				s->specular = fVals[2];
+				s->specular = fVals[3];
+				s->ior = fVals[4];
+			}
 			else
 			{
 				cout << "Malformed sphere finish in POV file." << endl;

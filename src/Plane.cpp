@@ -29,6 +29,10 @@ void Plane::createPlane(vec3 n, float d)
 {
 	this->distance = d;
 	this->normal = n;
+	this->roughness = 0.f;
+	this->specular = 0.f;
+	this->ambient = 0.f;
+	this->diffuse = 0.f;
 }
 
 void Plane::print()

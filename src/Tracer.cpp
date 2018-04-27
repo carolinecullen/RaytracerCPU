@@ -3,6 +3,7 @@
 #include "stb_image_write.h"
 #include "Tracer.hpp"
 #include "Ray.hpp"
+#include "Plane.hpp"
 
 using namespace std; 
 using namespace glm;
@@ -54,25 +55,39 @@ float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec)
 {
 	vec3 viewvec = normalize(scene->cam->location - pt);
 	vec3 halfvec = normalize(lightvec + viewvec);
-	
-	vec3 normal = pt;
+	vec3 normal;
+	if(obj->type == "Plane")
+	{
+		Plane * pPtr = (Plane *) obj;
+		normal = pPtr->normal;
+	}
+	else
+	{
+		normal = pt;
+	}
 
 	float dotprod = clamp(dot(halfvec, normal), 0.f, 1.f);
 	float hldval = pow(dotprod, obj->roughness);
 
 	float outspec = (obj->specular * hldval);
-
-	cout << "ks: " << obj->specular << endl;
-	cout << "roughness: " << obj->roughness << endl;
-	cout << "otuspec: " << outspec << endl;
-
 	return outspec;
 }
 
 float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec)
 {
-	vec3 normal = pt;
-	float diff = clamp((obj->diffuse * (dot(normal, lightvec))), 0.f, 1.f);
+	vec3 normal;
+
+	if(obj->type == "Plane")
+	{
+		Plane * pPtr = (Plane *) obj;
+		normal = pPtr->normal;
+	}
+	else
+	{
+		normal = pt;
+	}
+	float dotprod = clamp((dot(normal, lightvec)), 0.f, 1.f);
+	float diff = obj->diffuse * dotprod;
 
 	return diff;
 }

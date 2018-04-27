@@ -8,6 +8,12 @@ Sphere::Sphere()
 	this->radius = 0.f;
 	this->center = vec3(0.f);
 	this->translate = vec3(0.f);
+	this->roughness = 0.f;
+	this->specular = 0.f;
+	this->ambient = 0.f;
+	this->diffuse = 0.f;
+
+
 }
 
 float Sphere::intersect(const ray &r)
