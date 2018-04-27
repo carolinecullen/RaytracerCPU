@@ -100,7 +100,7 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec)
 vec3 Tracer::getColor(ray *r, Object* obj, float t)
 {
 	// vec3 pt = r->calculate(t)+0.001f;
-	vec3 pt = r->location+ r->direction*t;
+	vec3 pt = r->location + r->direction*t;
 	// pt+=0.001f;
 	//r->calculate(t)+0.001f;
 	vec3 outcolor = obj->pigment * obj->ambient;
@@ -168,9 +168,9 @@ void Tracer::traceRays()
 						retVal = hldVal;
 
 						vec3 color = getColor(r, so, retVal);
-						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round(color.x * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round(color.y * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round(color.z * 255.f);
+						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
 					}
 
 				}
@@ -259,9 +259,7 @@ void Tracer::castRays()
 		}
 	}
 
-	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
-	// delete[] data;
-	
+	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);	
 }
 
 void Tracer::firstHit(int x, int y, bool flag, ray *r, unsigned char* data)
@@ -312,8 +310,6 @@ void Tracer::firstHit(int x, int y, bool flag, ray *r, unsigned char* data)
 		else
 		{
 			cout << "BRDF: Blinn-Phong" << endl;
-			// cout << "data " << static_cast<unsigned>(data[0]) <<endl;
-
 			cout << "Color: (" << static_cast<unsigned>(data[0]) << ", " << static_cast<unsigned>(data[1]) << ", " << static_cast<unsigned>(data[2]) << ")" << endl;
 		}
 	}
