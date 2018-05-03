@@ -12,6 +12,7 @@ Sphere::Sphere()
 	this->specular = 0.f;
 	this->ambient = 0.f;
 	this->diffuse = 0.f;
+	this->normal = vec3(0.f);
 }
 
 float Sphere::intersect(const ray &r)
@@ -59,6 +60,11 @@ void Sphere::createSphere(vec3 c, float r, vec3 t)
 	this->radius = r;
 	this->center = c;
 	this->translate = t;
+}
+
+void Sphere::calcNormal(glm::vec3 v)
+{
+	this->normal = v - this->center;
 }
 
 

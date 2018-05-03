@@ -10,11 +10,13 @@ public:
 	float radius;
 	glm::vec3 center;
 	glm::vec3 translate;
+	glm::vec3 normal;
 
 	Sphere();
 
 	float intersect(const ray &r);
 	void createSphere(const glm::vec3, const float, const glm::vec3);
+	void calcNormal(glm::vec3);
 	void print();
 
 };

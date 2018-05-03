@@ -7,6 +7,7 @@
 #include "Sphere.hpp"
 #include "Scene.hpp"
 #include "Plane.hpp"
+#include "Triangle.hpp"
 
 using namespace std;
 
@@ -32,5 +33,7 @@ class Parse
 		static Sphere* sphereInsertion(std::ifstream &, std::string);
 
 		static Plane* planeInsertion(std::ifstream &, std::string);
+
+		static Triangle* triangleInsertion(std::ifstream &, std::string);
 
 };

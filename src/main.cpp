@@ -144,7 +144,7 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		cout << "Invalid command: use raycast, sceneinfo, pixelray, firsthit run with proper parameters." << endl;
+		cout << "Invalid command: use pixelcolor, render, raycast, sceneinfo, pixelray, firsthit run with proper parameters." << endl;
 		return -1;
 	}
 

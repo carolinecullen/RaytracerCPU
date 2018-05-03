@@ -9,8 +9,7 @@ class ray {
 		glm::vec3 location;
 		glm::vec3 direction;
 
-		ray();
-		void createRay(const glm::vec3, const glm::vec3);
+		ray(glm::vec3, glm::vec3);
 		glm::vec3 calculate(float);
 
 };

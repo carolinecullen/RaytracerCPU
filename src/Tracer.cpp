@@ -5,6 +5,7 @@
 #include "Ray.hpp"
 #include "Plane.hpp"
 #include "Sphere.hpp"
+#include "Triangle.hpp"
 
 using namespace std; 
 using namespace glm;
@@ -29,8 +30,7 @@ float Tracer::checkForIntersection(vec3 pt, vec3 lRay)
 	float retVal = numeric_limits<float>::max();
 	for(auto so: scene->sceneObjects)
 	{
-		ray *testRay = new ray();
-		testRay->createRay(pt, lRay);
+		ray *testRay = new ray(pt, lRay);
 		hldVal = so->intersect(*testRay);
 		if(hldVal > 0)
 		{
@@ -52,22 +52,10 @@ float Tracer::checkForIntersection(vec3 pt, vec3 lRay)
 	}
 }
 
-float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec)
+float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 {
 	vec3 viewvec = normalize(scene->cam->location - pt);
 	vec3 halfvec = normalize(lightvec + viewvec);
-	vec3 normal;
-	if(obj->type == "Plane")
-	{
-		Plane * pPtr = (Plane *) obj;
-		normal = pPtr->normal;
-	}
-	else
-	{
-		Sphere * sPtr = (Sphere *) obj;
-		normal = pt - sPtr->center;
-	}
-
 	float dotprod = clamp(dot(halfvec, normalize(normal)), 0.f, 1.f);
 
 	float alpha = (2/(pow(obj->roughness, 2)))-2;
@@ -77,20 +65,9 @@ float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec)
 	return outspec;
 }
 
-float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec)
+float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 {
-	vec3 normal;
 
-	if(obj->type == "Plane")
-	{
-		Plane * pPtr = (Plane *) obj;
-		normal = pPtr->normal;
-	}
-	else
-	{
-		Sphere * sPtr = (Sphere *) obj;
-		normal = pt - sPtr->center;
-	}
 	float dotprod = clamp((dot(normalize(normal), lightvec)), 0.f, 1.f);
 	float diff = obj->diffuse * dotprod;
 
@@ -99,22 +76,15 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec)
 
 vec3 Tracer::getColor(ray *r, Object* obj, float t)
 {
-	// vec3 pt = r->calculate(t)+0.001f;
 	vec3 pt = r->location + r->direction*t;
-	// pt+=0.001f;
-	//r->calculate(t)+0.001f;
 	vec3 outcolor = obj->pigment * obj->ambient;
 	float val = numeric_limits<float>::max();
 
 	for(auto l: scene->lights)
 	{
 		bool inShadow = false;
-
 		vec3 lightvec = normalize(l->location - pt);
-
-		ray *testRay = new ray();
-		testRay->createRay(pt, lightvec);
-
+		ray *testRay = new ray(pt, lightvec);
 		val = checkForIntersection(pt + 0.001f*testRay->direction, lightvec);
 
 		if(val != -1)
@@ -128,10 +98,27 @@ vec3 Tracer::getColor(ray *r, Object* obj, float t)
 
 		if(!inShadow)
 		{
-			// outcolor = obj->pigment;
-			// outcolor += computeDiffuse(pt, obj, lightvec) * obj->pigment;
-			outcolor += (computeDiffuse(pt, obj, lightvec)* obj->pigment *l->color);
-			outcolor += (computeSpecular(pt, obj, lightvec) * obj->pigment *l->color);
+			vec3 normVec;
+			if(obj->type == "Plane")
+			{
+				Plane * pPtr = (Plane *) obj;
+				normVec = pPtr->normal;
+			}
+			else if (obj->type == "Sphere")
+			{
+				Sphere * sPtr = (Sphere *) obj;
+				sPtr->calcNormal(pt);
+				normVec = sPtr->normal;
+			}
+			else
+			{
+				Triangle * tPtr = (Triangle *) obj;
+				tPtr->calcNormal(pt);
+				normVec = tPtr->normal;
+			}
+
+			outcolor += (computeDiffuse(pt, obj, lightvec, normVec)* obj->pigment *l->color);
+			outcolor += (computeSpecular(pt, obj, lightvec, normVec) * obj->pigment *l->color);
 		}
 	}
 
@@ -154,11 +141,10 @@ void Tracer::traceRays()
 			float pixelX = (float)((-0.5) + ((i + 0.5)/width));
 			float pixelY = (float)((-0.5) + ((j + 0.5)/height));
 
-			ray *r = new ray();
+			
 			vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 			vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
-			r->createRay(scene->cam->location, dir);
-
+			ray *r = new ray(scene->cam->location, dir);
 
 			float retVal = numeric_limits<float>::max();
 			float hldVal = -1;
@@ -193,10 +179,11 @@ void Tracer::pixelColor(int x, int y)
 	float pixelX = (float)((-0.5) + ((x + 0.5)/width));
 	float pixelY = (float)((-0.5) + ((y + 0.5)/height));
 
-	ray *r = new ray();
+	
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
-	r->createRay(scene->cam->location, dir);
+	ray *r = new ray(scene->cam->location, dir);
+
 
 	float retVal = numeric_limits<float>::max();
 	float hldVal = -1;
@@ -236,10 +223,10 @@ void Tracer::castRays()
 			float pixelX = (float)((-0.5) + ((i + 0.5)/width));
 			float pixelY = (float)((-0.5) + ((j + 0.5)/height));
 
-			ray *r = new ray();
+			
 			vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 			vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
-			r->createRay(scene->cam->location, dir);
+			ray *r = new ray(scene->cam->location, dir);
 
 
 			float retVal = numeric_limits<float>::max();
@@ -273,10 +260,10 @@ void Tracer::firstHit(int x, int y, bool flag, ray *r, unsigned char* data)
 
 	if ( r == NULL)
 	{
-		r = new ray();
+		
 		vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 		vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
-		r->createRay(scene->cam->location, dir);
+		r = new ray(scene->cam->location, dir);
 	}
 	
 
@@ -331,10 +318,10 @@ void Tracer::pixelRay(int x, int y)
 	float pixelX = (float)((-0.5) + ((x + 0.5)/width));
 	float pixelY = (float)((-0.5) + ((y + 0.5)/height));
 
-	ray *r = new ray();
+	
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
-	r->createRay(scene->cam->location, dir);
+	ray *r = new ray(scene->cam->location, dir);
 
 	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
 	cout << r->location.x << " " << r->location.y << " " << r->location.z << "} -> {";

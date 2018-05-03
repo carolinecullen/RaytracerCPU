@@ -2,16 +2,10 @@
 
 using namespace glm;
 
-ray::ray()
+ray::ray(vec3 loc, vec3 dir)
 {
-	this->location = vec3(0.f);
-	this->direction = vec3(0.f);
-}
-
-void ray::createRay(vec3 location, vec3 direction)
-{
-	this->location = location;
-	this->direction = direction;
+	this->location = loc;
+	this->direction = dir;
 }
 
 vec3 ray::calculate(float t)
