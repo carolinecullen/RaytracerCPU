@@ -308,8 +308,6 @@ void Tracer::firstHit(int x, int y, bool flag, ray *r, unsigned char* data)
 	{
 		cout << "No Hit" << endl;
 	}
-
-
 }
 
 void Tracer::pixelRay(int x, int y)
@@ -326,6 +324,4 @@ void Tracer::pixelRay(int x, int y)
 	cout << "Pixel: [" << x << ", " << y << "] Ray: {";
 	cout << r->location.x << " " << r->location.y << " " << r->location.z << "} -> {";
 	cout << r->direction.x << " " << r->direction.y << " " << r->direction.z << "}" << endl;
-
-
 }

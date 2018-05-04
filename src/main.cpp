@@ -142,6 +142,26 @@ int main(int argc, char** argv)
 
 		
 	}
+	else if(strcmp(argv[1], "printrays") == 0)
+	{
+		if(argc == 8 || argc == 7)
+		{
+			if(!Parse::tokenParser(argv[2], s))
+			{
+				return -1;
+			}
+
+			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+			tracer->pixelColor(stoi(argv[5]), stoi(argv[6]));
+		}
+		else
+		{
+			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height> <x> <y>" << endl;
+			return -1;
+		}
+
+		
+	}
 	else
 	{
 		cout << "Invalid command: use pixelcolor, render, raycast, sceneinfo, pixelray, firsthit run with proper parameters." << endl;
@@ -151,8 +171,3 @@ int main(int argc, char** argv)
 
 }
 
-// needed for precision and rounding in order to match dunns outputs
-
-// unsigned int red = (unsigned int) std::round(color.r * 255.f);
-// unsigned int green = (unsigned int) std::round(color.g * 255.f);
-// unsigned int blue = (unsigned int) std::round(color.b * 255.f);

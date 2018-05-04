@@ -19,6 +19,7 @@ public:
 	glm::vec3 pigment;
 	glm::vec3 normal;
 	float ior;
+	int id;
 
 	Object() {};
 

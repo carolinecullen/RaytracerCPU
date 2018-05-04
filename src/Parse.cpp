@@ -221,7 +221,6 @@ Triangle* Parse::triangleInsertion(ifstream &FileHandle, string line)
 		t->A = vec3(aVals[0], aVals[1], aVals[2]);
 		t->B = vec3(aVals[3], aVals[4], aVals[5]);
 		t->C = vec3(aVals[6], aVals[7], aVals[8]);
-		t->calculateValues();
 	}
 	else
 	{
@@ -408,6 +407,7 @@ bool Parse::tokenParser(string fName, Scene *scene)
 
 	string holdBuf;
 
+	int i = 1;
 	while(getline(FileHandle, holdBuf))
 	{
 		string token;
@@ -424,8 +424,10 @@ bool Parse::tokenParser(string fName, Scene *scene)
 			}
 			else if (token == "sphere")
 			{
-				Sphere *s = sphereInsertion(FileHandle, holdBuf);
-				objs.push_back(s);
+				Sphere *sphere = sphereInsertion(FileHandle, holdBuf);
+				objs.push_back(sphere);
+				sphere->id = i;
+				i++;
 			}
 			else if (token == "light_source")
 			{
@@ -436,11 +438,15 @@ bool Parse::tokenParser(string fName, Scene *scene)
 			{
 				Plane *plane = planeInsertion(FileHandle, holdBuf);
 				objs.push_back(plane);
+				plane->id = i;
+				i++;
 			}
 			else if (token == "triangle")
 			{
 				Triangle *triangle = triangleInsertion(FileHandle, holdBuf);
 				objs.push_back(triangle);
+				triangle->id = i;
+				i++;
 			}
 			else if (token == "camera")
 			{
