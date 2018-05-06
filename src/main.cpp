@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "Tracer.hpp"
+#include "Diagnostic.hpp"
 
 using namespace std;
 using namespace glm;
@@ -22,7 +23,25 @@ int main(int argc, char** argv)
    	
 	Scene *s = new Scene();
 
-	if(strcmp(argv[1], "raycast") == 0)
+	if(strcmp(argv[1], "render") == 0)
+	{
+		if(argc == 6 || argc == 5)
+		{
+			if(!Parse::tokenParser(argv[2], s))
+			{
+				return -1;
+			}
+
+			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+			tracer->traceRays();
+		}
+		else
+		{
+			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height>" << endl;
+			return -1;
+		}
+	}
+	else if(strcmp(argv[1], "raycast") == 0)
 	{
 		if(argc != 5)
 		{
@@ -51,24 +70,9 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		s->cam->printCamera();
-		cout << s->lights.size() << " light(s)" << endl << endl;
-		int i = 0;
-		for(auto l: s->lights)
-		{
-			cout << "Light[" << i << "]:" << endl;
-			l->printLight();
-			i++;
-		}
+		Diagnostic *diag = new Diagnostic(s, 0, 0);
+		diag->sceneInfo();
 
-		cout << s->sceneObjects.size() << " object(s)" << endl << endl;
-		i = 0;
-		for(auto so: s->sceneObjects)
-		{
-			cout << "Object[" << i << "]:" << endl;
-			so->print();
-			i++;
-		}
 	}
 	else if(strcmp(argv[1], "pixelray") == 0)
 	{
@@ -83,8 +87,8 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-		tracer->pixelRay(stoi(argv[5]), stoi(argv[6]));
+		Diagnostic *diag = new Diagnostic(s, stoi(argv[3]), stoi(argv[4]));
+		diag->pixelRay(stoi(argv[5]), stoi(argv[6]));
 	}
 	else if(strcmp(argv[1], "firsthit") == 0)
 	{
@@ -99,28 +103,11 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+		Diagnostic *diag = new Diagnostic(s, stoi(argv[3]), stoi(argv[4]));
 		ray * r= NULL;
 		unsigned char * c= NULL;
-		tracer->firstHit(stoi(argv[5]), stoi(argv[6]), true, r, c);
-	}
-	else if(strcmp(argv[1], "render") == 0)
-	{
-		if(argc == 6 || argc == 5)
-		{
-			if(!Parse::tokenParser(argv[2], s))
-			{
-				return -1;
-			}
+		diag->firstHit(stoi(argv[5]), stoi(argv[6]), true, r, c);
 
-			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-			tracer->traceRays();
-		}
-		else
-		{
-			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height>" << endl;
-			return -1;
-		}
 	}
 	else if(strcmp(argv[1], "pixelcolor") == 0)
 	{
@@ -131,8 +118,8 @@ int main(int argc, char** argv)
 				return -1;
 			}
 
-			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-			tracer->pixelColor(stoi(argv[5]), stoi(argv[6]));
+			Diagnostic *diag = new Diagnostic(s, stoi(argv[3]), stoi(argv[4]));
+			diag->pixelColor(stoi(argv[5]), stoi(argv[6]));
 		}
 		else
 		{
@@ -151,8 +138,8 @@ int main(int argc, char** argv)
 				return -1;
 			}
 
-			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-			tracer->pixelColor(stoi(argv[5]), stoi(argv[6]));
+			Diagnostic *diag = new Diagnostic(s, stoi(argv[3]), stoi(argv[4]));
+			diag->pixelColor(stoi(argv[5]), stoi(argv[6]));
 		}
 		else
 		{
