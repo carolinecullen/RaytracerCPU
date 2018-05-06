@@ -8,7 +8,6 @@ class Plane : public Object {
 public:
 
 	float distance;
-	glm::vec3 normal;
 
 	Plane();
 

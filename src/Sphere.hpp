@@ -10,7 +10,6 @@ public:
 	float radius;
 	glm::vec3 center;
 	glm::vec3 translate;
-	glm::vec3 normal;
 
 	Sphere();
 

@@ -20,13 +20,13 @@ Triangle::Triangle()
 float Triangle::intersect(const ray &r)
 {
 	float a = (A.x - B.x);
-	float d = (A.x - C.x);
-	float g = (r.direction.x);
 	float b = (A.y - B.y);
+	float c = (A.z - B.z);
+	float d = (A.x - C.x);
 	float e = (A.y - C.y);
-	float h = (r.direction.y);
-	float c = (A.z - B.y);
 	float f = (A.z - C.z);
+	float g = (r.direction.x);
+	float h = (r.direction.y);
 	float i = (r.direction.z);
 	float j = (A.x - r.location.x);
 	float k = (A.y - r.location.y);
