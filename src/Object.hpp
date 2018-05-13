@@ -17,8 +17,12 @@ public:
 	float specular;
 	float roughness;
 	glm::vec3 pigment;
+	glm::vec4 pigmenta;
+	glm::vec4 pigmentf;
 	glm::vec3 normal;
 	float ior;
+	float reflection;
+	float refraction;
 	int id;
 
 	Object() {};

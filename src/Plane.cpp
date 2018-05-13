@@ -11,6 +11,11 @@ Plane::Plane()
 	this->specular = 0.f;
 	this->ambient = 0.f;
 	this->diffuse = 0.f;
+	this->reflection = 0.f;
+	this->refraction = 0.f;
+	this->pigment = vec3(-1.0f);
+	this->pigmenta = vec4(-1.0f);
+	this->pigmentf = vec4(-1.0f);
 }
 
 float Plane::intersect(const ray &r)
@@ -43,7 +48,7 @@ void Plane::print()
 	cout << "- Normal: {" << normal.x << " " << normal.y << " " << normal.z << "}" << endl;
 	cout << "- Distance: " << distance << endl;
 	cout << "- Color: {" << pigment.x << " " << pigment.y << " " << pigment.z << "}" << endl;
-	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular <<endl << "  - Roughness: " << roughness << endl << "  - IOR: " << ior << endl;;
+	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular << endl << "  - Roughness: " << roughness << endl << "  - IOR: " << ior << endl << "  - Reflection: " << reflection << endl << "  - Refraction: " << refraction << endl;
 
 	cout << endl;
 }

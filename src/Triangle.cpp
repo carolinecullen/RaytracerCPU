@@ -12,9 +12,13 @@ Triangle::Triangle()
 	this->specular = 0.f;
 	this->ambient = 0.f;
 	this->diffuse = 0.f;
-	this->pigment = vec3(0.f);
+	this->pigment = vec3(-1.0f);
+	this->pigmenta = vec4(-1.0f);
+	this->pigmentf = vec4(-1.0f);
 	this->normal = vec3(0.f);
 	this->ior = 0.f;
+	this->reflection = 0.f;
+	this->refraction = 0.f;
 }
 
 float Triangle::intersect(const ray &r)
@@ -86,7 +90,7 @@ void Triangle::print()
 	cout << "  - B = {" << B.x << " " << B.y << " " << B.z << "}" << endl;
 	cout << "  - C = {" << C.x << " " << C.y << " " << C.z << "}" << endl;
 	cout << "- Color: {" << pigment.x << " " << pigment.y << " " << pigment.z << "}" << endl;
-	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular << endl << "  - Roughness: " << roughness << endl << "  - IOR: " << ior << endl;
+	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular << endl << "  - Roughness: " << roughness << endl << "  - IOR: " << ior << endl << "  - Reflection: " << reflection << endl << "  - Refraction: " << refraction << endl;
 
 	cout << endl;
 }

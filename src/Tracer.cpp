@@ -74,22 +74,50 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 	return diff;
 }
 
-vec3 Tracer::getColor(ray *r, Object* obj, float t)
+vec3 Tracer::getColor(ray* incRay, int recCount)
 {
-	vec3 pt = r->location + r->direction*t;
+	if (recCount <= 0)
+	{
+		return vec3(0.f);
+	}
+
+	float retVal = numeric_limits<float>::max();
+	float hldVal = -1;
+	Object *obj = NULL;
+
+	for(auto so: scene->sceneObjects)
+	{
+		hldVal = so->intersect(*incRay);
+		if(hldVal > 0)
+		{
+			if(hldVal < retVal)
+			{
+				retVal = hldVal;
+				obj = so;
+			}
+		}
+	}
+
+	if(obj == NULL)
+	{
+		return vec3(0.f);
+	}
+
+
+	vec3 intersectPt = incRay->location + incRay->direction*retVal;
 	vec3 outcolor = obj->pigment * obj->ambient;
 	float val = numeric_limits<float>::max();
 
 	for(auto l: scene->lights)
 	{
 		bool inShadow = false;
-		vec3 lightvec = normalize(l->location - pt);
-		ray *testRay = new ray(pt, lightvec);
-		val = checkForIntersection(pt + 0.001f*testRay->direction, lightvec);
+		vec3 lightvec = normalize(l->location - intersectPt);
+		ray *testRay = new ray(intersectPt, lightvec);
+		val = checkForIntersection(intersectPt + 0.001f*testRay->direction, lightvec);
 
 		if(val != -1)
 		{
-			if (val < length((l->location) - pt))
+			if (val < length((l->location) - intersectPt))
 			{
 				inShadow = true;
 			}
@@ -107,23 +135,37 @@ vec3 Tracer::getColor(ray *r, Object* obj, float t)
 			else if (obj->type == "Sphere")
 			{
 				Sphere * sPtr = (Sphere *) obj;
-				sPtr->calcNormal(pt);
+				sPtr->calcNormal(intersectPt);
 				normVec = sPtr->normal;
 			}
 			else
 			{
 				Triangle * tPtr = (Triangle *) obj;
-				tPtr->calcNormal(pt);
+				tPtr->calcNormal(intersectPt);
 				normVec = tPtr->normal;
 			}
+			
+			outcolor += (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color);
+			outcolor += (computeSpecular(intersectPt, obj, lightvec, normVec) * obj->pigment *l->color);
 
-			outcolor += (computeDiffuse(pt, obj, lightvec, normVec)* obj->pigment *l->color);
-			outcolor += (computeSpecular(pt, obj, lightvec, normVec) * obj->pigment *l->color);
+			vec3 reflectColor = vec3(0.f);
+			if(obj->reflection > 0)
+			{
+				float refProd = dot(testRay->direction, normVec);
+				vec3 reflectVec = (testRay->direction) - (2*(refProd)*normVec);
+				ray *pass = new ray(intersectPt, reflectVec);
+				reflectColor = clamp((getColor(pass, recCount)), 0.f, 1.f);
+				outcolor += (reflectColor * obj->reflection) * obj->pigment;
+			}
+			
 		}
 	}
 
-	return outcolor;
+	return outcolor * (1 - obj->reflection);
+	// return outcolor;
 }
+
+
 
 void Tracer::traceRays()
 {
@@ -146,25 +188,13 @@ void Tracer::traceRays()
 			vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 			ray *r = new ray(scene->cam->location, dir);
 
-			float retVal = numeric_limits<float>::max();
-			float hldVal = -1;
-			for(auto so: scene->sceneObjects)
-			{
-				hldVal = so->intersect(*r);
-				if(hldVal > 0)
-				{
-					if(hldVal < retVal)
-					{
-						retVal = hldVal;
-
-						vec3 color = getColor(r, so, retVal);
-						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
-					}
-
-				}
-			}
+			
+			vec3 color = getColor(r, 6);
+			data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
+	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
+	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
+					
+				
 		}
 	}
 

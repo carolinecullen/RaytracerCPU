@@ -158,52 +158,11 @@ Triangle* Parse::triangleInsertion(ifstream &FileHandle, string line)
 
 		if(tok == "pigment")
 		{
-			vector<float> tVals;
-			tVals = Parse::getFloats(buf);
-
-			if(tVals.size() > 3 || tVals.size() < 3)
-			{
-				cout << "Malformed Plane Pigment in POV file." << endl;
-				return NULL;
-			}
-			t->pigment = vec3(tVals[0], tVals[1], tVals[2]);
+			parse_triangle_pigment(t, buf);
 		} 
 		else if(tok == "finish")
 		{
-			vector<float> tVals;
-			tVals = Parse::getFloats(buf);
-
-			if(tVals.size() == 2)
-			{
-				t->ambient = tVals[0];
-				t->diffuse = tVals[1];
-			}
-			else if(tVals.size() == 3)
-			{
-				t->ambient = tVals[0];
-				t->diffuse = tVals[1];
-				t->specular = tVals[2];
-			}
-			else if(tVals.size() == 4)
-			{
-				t->ambient = tVals[0];
-				t->diffuse = tVals[1];
-				t->specular = tVals[2];
-				t->roughness = tVals[3];
-			}
-			else if(tVals.size() == 5)
-			{
-				t->ambient = tVals[0];
-				t->diffuse = tVals[1];
-				t->specular = tVals[2];
-				t->roughness = tVals[3];
-				t->ior = tVals[4];
-			}
-			else
-			{
-				cout << "Malformed Triangle Finish in POV file." << endl;
-				return NULL;
-			}
+			parse_triangle_finish(t, buf);
 		}
 		else
 		{
@@ -245,59 +204,12 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 	{
 		if(tok == "pigment")
 		{
-			vector<float> sVals;
-			sVals = Parse::getFloats(buf);
-
-			if(sVals.size() > 3 || sVals.size() < 3)
-			{
-				cout << "Malformed sphere pigment in POV file." << endl;
-				return NULL;
-			}
-			s->pigment = vec3(sVals[0], sVals[1], sVals[2]);
+			parse_sphere_pigment(s, buf);
 		}
 
 		if(tok == "finish")
-		{
-			vector<float> fVals;
-			fVals = Parse::getFloats(buf);
-
-			s->ambient = 0.f;
-			s->diffuse = 0.f;
-			s->specular = 0.f;
-			s->roughness = 0.f;
-
-			if(fVals.size() == 2)
-			{
-				s->ambient = fVals[0];
-				s->diffuse = fVals[1];
-			}
-			else if(fVals.size() == 3)
-			{
-				s->ambient = fVals[0];
-				s->diffuse = fVals[1];
-				s->specular = fVals[2];
-			}
-			else if(fVals.size() == 4)
-			{
-				s->ambient = fVals[0];
-				s->diffuse = fVals[1];
-				s->specular = fVals[2];
-				s->roughness = fVals[3];
-			}
-			else if(fVals.size() == 5)
-			{
-				s->ambient = fVals[0];
-				s->diffuse = fVals[1];
-				s->specular = fVals[2];
-				s->roughness = fVals[3];
-				s->ior = fVals[4];
-			}
-			else
-			{
-				cout << "Malformed sphere finish in POV file." << endl;
-				return NULL;
-			}
-			
+		{	
+			parse_sphere_finish(s, buf);
 		}
 
 		if(tok == "translate")
@@ -333,63 +245,254 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 	{
 		if(tok == "pigment")
 		{
-			vector<float> pVals;
-			pVals = Parse::getFloats(buf);
-
-			if(pVals.size() > 3 || pVals.size() < 3)
-			{
-				cout << "Malformed Plane Pigment in POV file." << endl;
-				return NULL;
-			}
-			p->pigment = vec3(pVals[0], pVals[1], pVals[2]);
+			parse_plane_pigment(p, buf);
 		}
 
 		if(tok == "finish")
 		{
-			vector<float> pVals;
-			pVals = Parse::getFloats(buf);
 
-			p->ambient = 0.f;
-			p->diffuse = 0.f;
-			p->specular = 0.f;
-			p->roughness = 0.f;
-
-			if(pVals.size() == 2)
-			{
-				p->ambient = pVals[0];
-				p->diffuse = pVals[1];
-			}
-			else if(pVals.size() == 3)
-			{
-				p->ambient = pVals[0];
-				p->diffuse = pVals[1];
-				p->specular = pVals[2];
-			}
-			else if(pVals.size() == 4)
-			{
-				p->ambient = pVals[0];
-				p->diffuse = pVals[1];
-				p->specular = pVals[2];
-				p->roughness = pVals[3];
-			}
-			else if(pVals.size() == 5)
-			{
-				p->ambient = pVals[0];
-				p->diffuse = pVals[1];
-				p->specular = pVals[2];
-				p->roughness = pVals[3];
-				p->ior = pVals[4];
-			}
-			else
-			{
-				cout << "Malformed Plane Finish in POV file." << endl;
-				return NULL;
-			}
+			parse_plane_finish(p, buf);
 		}
 		buf = "";	
 	}
 
 	return p;
+}
+
+
+void Parse::parse_sphere_pigment(Sphere *sphere, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	vector<string> sVals;
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "rgb")
+		{
+			sphere->pigment = vec3(nums[0], nums[1], nums[2]);
+			i++;
+		}
+		else if(s == "rgbf")
+		{
+			sphere->pigmentf = vec4(nums[0], nums[1], nums[2], nums[3]);
+			i++;
+		}
+		else if(s == "specular")
+		{
+			sphere->pigmenta = vec4(nums[0], nums[1], nums[2], nums[3]);;
+			i++;
+		}
+	}
+}
+
+void Parse::parse_triangle_pigment(Triangle *t, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	vector<string> sVals;
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "rgb")
+		{
+			t->pigment = vec3(nums[0], nums[1], nums[2]);
+			i++;
+		}
+		else if(s == "rgbf")
+		{
+			t->pigmentf = vec4(nums[0], nums[1], nums[2], nums[3]);
+			i++;
+		}
+		else if(s == "specular")
+		{
+			t->pigmenta = vec4(nums[0], nums[1], nums[2], nums[3]);;
+			i++;
+		}
+	}
+}
+
+void Parse::parse_plane_pigment(Plane *p, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	vector<string> sVals;
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "rgb")
+		{
+			p->pigment = vec3(nums[0], nums[1], nums[2]);
+			i++;
+		}
+		else if(s == "rgbf")
+		{
+			p->pigmentf = vec4(nums[0], nums[1], nums[2], nums[3]);
+			i++;
+		}
+		else if(s == "specular")
+		{
+			p->pigmenta = vec4(nums[0], nums[1], nums[2], nums[3]);;
+			i++;
+		}
+	}
+}
+
+void Parse::parse_sphere_finish(Sphere *sphere, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	vector<string> sVals;
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "{ambient")
+		{
+			sphere->ambient = nums[i];
+			i++;
+		}
+		else if(s == "diffuse")
+		{
+			sphere->diffuse = nums[i];
+			i++;
+		}
+		else if(s == "specular")
+		{
+			sphere->specular = nums[i];
+			i++;
+		}
+		else if(s == "ior")
+		{
+			sphere->ior = nums[i];
+			i++;
+		}
+		else if(s == "reflection")
+		{
+			sphere->reflection = nums[i];
+			i++;
+		}
+		else if(s == "refraction")
+		{
+			sphere->refraction = nums[i];
+			i++;
+		}
+		else if(s == "roughness")
+		{
+			sphere->roughness = nums[i];
+			i++;
+		}
+	}
+
+}
+
+void Parse::parse_triangle_finish(Triangle *t, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	vector<string> sVals;
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "{ambient")
+		{
+			t->ambient = nums[i];
+			i++;
+		}
+		else if(s == "diffuse")
+		{
+			t->diffuse = nums[i];
+			i++;
+		}
+		else if(s == "specular")
+		{
+			t->specular = nums[i];
+			i++;
+		}
+		else if(s == "ior")
+		{
+			t->ior = nums[i];
+			i++;
+		}
+		else if(s == "reflection")
+		{
+			t->reflection = nums[i];
+			i++;
+		}
+		else if(s == "refraction")
+		{
+			t->refraction = nums[i];
+			i++;
+		}
+		else if(s == "roughness")
+		{
+			t->roughness = nums[i];
+			i++;
+		}
+	}
+}
+
+void Parse::parse_plane_finish(Plane *p, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	vector<string> sVals;
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "{ambient")
+		{
+			p->ambient = nums[i];
+			i++;
+		}
+		else if(s == "diffuse")
+		{
+			p->diffuse = nums[i];
+			i++;
+		}
+		else if(s == "specular")
+		{
+			p->specular = nums[i];
+			i++;
+		}
+		else if(s == "ior")
+		{
+			p->ior = nums[i];
+			i++;
+		}
+		else if(s == "reflection")
+		{
+			p->reflection = nums[i];
+			i++;
+		}
+		else if(s == "refraction")
+		{
+			p->refraction = nums[i];
+			i++;
+		}
+		else if(s == "roughness")
+		{
+			p->roughness = nums[i];
+			i++;
+		}
+	}
 }
 
 bool Parse::tokenParser(string fName, Scene *scene)

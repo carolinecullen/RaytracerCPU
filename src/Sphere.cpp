@@ -8,10 +8,16 @@ Sphere::Sphere()
 	this->radius = 0.f;
 	this->center = vec3(0.f);
 	this->translate = vec3(0.f);
+	this->pigment = vec3(-1.0f);
+	this->pigmenta = vec4(-1.0f);
+	this->pigmentf = vec4(-1.0f);
 	this->roughness = 0.f;
 	this->specular = 0.f;
 	this->ambient = 0.f;
 	this->diffuse = 0.f;
+	this->ior = 0.f;
+	this->refraction = 0.f;
+	this->reflection = 0.f;
 	this->normal = vec3(0.f);
 }
 
@@ -74,7 +80,7 @@ void Sphere::print()
 	cout << "- Center: {" << center.x << " " << center.y << " " << center.z << "}" << endl;
 	cout << "- Radius: " << radius << endl;
 	cout << "- Color: {" << pigment.x << " " << pigment.y << " " << pigment.z << "}" << endl;
-	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular <<endl<< "  - Roughness: " << roughness << endl;
+	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular << endl << "  - Roughness: " << roughness << endl << "  - IOR: " << ior << endl << "  - Reflection: " << reflection << endl << "  - Refraction: " << refraction << endl;
 
 	cout << endl;
 }

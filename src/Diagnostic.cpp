@@ -127,26 +127,13 @@ void Diagnostic::pixelColor(int x, int y)
 	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 	ray *r = new ray(scene->cam->location, dir);
 
+	
+	Tracer *t = new Tracer(scene, width, height);
+	vec3 color = t->getColor(r, 1);
+	data[0] = (unsigned int) round(color.x * 255.f);
+    data[1] = (unsigned int) round(color.y * 255.f);
+    data[2] = (unsigned int) round(color.z * 255.f);
 
-	float retVal = numeric_limits<float>::max();
-	float hldVal = -1;
-	for(auto so: scene->sceneObjects)
-	{
-		hldVal = so->intersect(*r);
-		if(hldVal > 0)
-		{
-			if(hldVal < retVal)
-			{
-				retVal = hldVal;
-				Tracer *t = new Tracer(scene, width, height);
-				vec3 color = t->getColor(r, so, retVal);
-				data[0] = (unsigned int) round(color.x * 255.f);
-		        data[1] = (unsigned int) round(color.y * 255.f);
-		        data[2] = (unsigned int) round(color.z * 255.f);
-			}
-
-		}
-	}
 	
 	firstHit(x, y, false, r, data);
 }
