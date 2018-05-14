@@ -148,13 +148,13 @@ vec3 Tracer::getColor(ray* incRay, int recCount)
 			outcolor += (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color);
 			outcolor += (computeSpecular(intersectPt, obj, lightvec, normVec) * obj->pigment *l->color);
 
-			vec3 reflectColor = vec3(0.f);
+			vec3 reflectColor;
 			if(obj->reflection > 0)
 			{
 				float refProd = dot(testRay->direction, normVec);
-				vec3 reflectVec = (testRay->direction) - (2*(refProd)*normVec);
-				ray *pass = new ray(intersectPt, reflectVec);
-				reflectColor = clamp((getColor(pass, recCount)), 0.f, 1.f);
+				vec3 reflectVec = normalize((testRay->direction) - (2*(refProd)*normVec));
+				ray *pass = new ray((intersectPt + reflectVec * 0.001f), reflectVec);
+				vec3 reflectColor = getColor(pass, recCount-1);
 				outcolor += (reflectColor * obj->reflection) * obj->pigment;
 			}
 			
