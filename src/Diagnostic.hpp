@@ -19,6 +19,8 @@ class Diagnostic {
 		void traceRays();
 		void firstHit(int, int, bool, ray *, unsigned char *);
 		void pixelRay(int, int);
+		void printrays(int, int);
+		void printraysHelper(ray*, int);
 		glm::vec3 getColor(ray *, Object*, float);
 		float checkForIntersection(glm::vec3, glm::vec3);
 		void pixelColor(int, int);

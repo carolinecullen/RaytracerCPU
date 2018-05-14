@@ -278,12 +278,14 @@ void Parse::parse_sphere_pigment(Sphere *sphere, string buf)
 		}
 		else if(s == "rgbf")
 		{
-			sphere->pigmentf = vec4(nums[0], nums[1], nums[2], nums[3]);
+			sphere->pigment = vec3(nums[0], nums[1], nums[2]);
+			sphere->filter = nums[3];
 			i++;
 		}
-		else if(s == "specular")
+		else if(s == "rgba")
 		{
-			sphere->pigmenta = vec4(nums[0], nums[1], nums[2], nums[3]);;
+			sphere->pigment = vec3(nums[0], nums[1], nums[2]);
+			sphere->filter = nums[3];
 			i++;
 		}
 	}
@@ -307,12 +309,14 @@ void Parse::parse_triangle_pigment(Triangle *t, string buf)
 		}
 		else if(s == "rgbf")
 		{
-			t->pigmentf = vec4(nums[0], nums[1], nums[2], nums[3]);
+			t->pigment = vec3(nums[0], nums[1], nums[2]);
+			t->filter = nums[3];
 			i++;
 		}
-		else if(s == "specular")
+		else if(s == "rgba")
 		{
-			t->pigmenta = vec4(nums[0], nums[1], nums[2], nums[3]);;
+			t->pigment = vec3(nums[0], nums[1], nums[2]);
+			t->filter = nums[3];
 			i++;
 		}
 	}
@@ -336,12 +340,14 @@ void Parse::parse_plane_pigment(Plane *p, string buf)
 		}
 		else if(s == "rgbf")
 		{
-			p->pigmentf = vec4(nums[0], nums[1], nums[2], nums[3]);
+			p->pigment = vec3(nums[0], nums[1], nums[2]);
+			p->filter = nums[3];
 			i++;
 		}
-		else if(s == "specular")
+		else if(s == "rgba")
 		{
-			p->pigmenta = vec4(nums[0], nums[1], nums[2], nums[3]);;
+			p->pigment = vec3(nums[0], nums[1], nums[2]);
+			p->filter = nums[3];
 			i++;
 		}
 	}

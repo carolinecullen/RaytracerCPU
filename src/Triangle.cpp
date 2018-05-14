@@ -13,8 +13,7 @@ Triangle::Triangle()
 	this->ambient = 0.f;
 	this->diffuse = 0.f;
 	this->pigment = vec3(-1.0f);
-	this->pigmenta = vec4(-1.0f);
-	this->pigmentf = vec4(-1.0f);
+	this->filter = 0.f;
 	this->normal = vec3(0.f);
 	this->ior = 0.f;
 	this->reflection = 0.f;

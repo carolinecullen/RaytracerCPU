@@ -105,7 +105,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount)
 
 
 	vec3 intersectPt = incRay->location + incRay->direction*retVal;
-	vec3 outcolor = obj->pigment * obj->ambient;
+	vec3 outcolor = obj->pigment * obj->ambient * (1 - obj->reflection);
 	float val = numeric_limits<float>::max();
 
 	for(auto l: scene->lights)
@@ -145,26 +145,54 @@ vec3 Tracer::getColor(ray* incRay, int recCount)
 				normVec = tPtr->normal;
 			}
 			
-			outcolor += (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color);
-			outcolor += (computeSpecular(intersectPt, obj, lightvec, normVec) * obj->pigment *l->color);
+			outcolor += (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color)* (1 - obj->reflection);
+			outcolor += (computeSpecular(intersectPt, obj, lightvec, normVec) * obj->pigment *l->color)* (1 - obj->reflection);
 
 			vec3 reflectColor;
 			if(obj->reflection > 0)
 			{
-				float refProd = dot(testRay->direction, normVec);
-				vec3 reflectVec = normalize((testRay->direction) - (2*(refProd)*normVec));
+				float refProd = dot(incRay->direction, normVec);
+				vec3 reflectVec = (incRay->direction) - (2.f*(refProd)*normVec);
 				ray *pass = new ray((intersectPt + reflectVec * 0.001f), reflectVec);
 				vec3 reflectColor = getColor(pass, recCount-1);
+				// cout << "reflection color :  " << reflectColor.x << " " << reflectColor.y << " " << reflectColor.z << endl;
+
 				outcolor += (reflectColor * obj->reflection) * obj->pigment;
 			}
+
+			// if(obj->refraction > 0)
+			// {
+			// 	ray* refractRay = calcRefractionRay(testRay->direction, normVec, intersectPt, obj);
+			// 	vec3 refractColor = getColor(refractRay, recCount-1);
+			// 	outcolor += (refractColor * obj->refraction) * obj->pigment;
+			// }
 			
 		}
 	}
 
-	return outcolor * (1 - obj->reflection);
-	// return outcolor;
+	return outcolor; //* (1 - obj->reflection);
+
 }
 
+ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 normVec, vec3 intersectPt, Object* obj)
+{
+	float n1 = 1;
+	float n2 = obj->ior;
+
+	if (dot(normVec, rayDirection) > 0) 
+	{
+		n1 = n2;
+		n2 = 1;
+		normVec = -normVec;
+	}
+
+	float directionDot = dot(rayDirection, normVec);
+	float snell = n1/n2;
+	float sqrtVal = 1-(snell*snell)*(1-directionDot*directionDot);
+
+	vec3 refractVec = normalize(sqrtVal*(rayDirection-directionDot*normVec)-normVec*(float)sqrt(sqrtVal));
+	return (new ray((intersectPt + refractVec * 0.001f), refractVec));
+}
 
 
 void Tracer::traceRays()

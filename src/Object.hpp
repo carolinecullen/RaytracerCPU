@@ -17,8 +17,7 @@ public:
 	float specular;
 	float roughness;
 	glm::vec3 pigment;
-	glm::vec4 pigmenta;
-	glm::vec4 pigmentf;
+	float filter;
 	glm::vec3 normal;
 	float ior;
 	float reflection;

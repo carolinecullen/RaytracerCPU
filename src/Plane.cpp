@@ -14,8 +14,7 @@ Plane::Plane()
 	this->reflection = 0.f;
 	this->refraction = 0.f;
 	this->pigment = vec3(-1.0f);
-	this->pigmenta = vec4(-1.0f);
-	this->pigmentf = vec4(-1.0f);
+	this->filter = 0.f;
 }
 
 float Plane::intersect(const ray &r)

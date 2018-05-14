@@ -3,6 +3,7 @@
 
 #include "Scene.hpp"
 #include "Ray.hpp"
+#include "Object.hpp"
 
 class Tracer { 
 
@@ -18,6 +19,7 @@ class Tracer {
 		void castRays();
 		void traceRays();
 		glm::vec3 getColor(ray*, int);
+		ray* calcRefractionRay(glm::vec3, glm::vec3, glm::vec3, Object*);
 		float checkForIntersection(glm::vec3, glm::vec3);
 		float computeDiffuse(glm::vec3, Object*, glm::vec3, glm::vec3);
 		float computeSpecular(glm::vec3, Object*, glm::vec3, glm::vec3);

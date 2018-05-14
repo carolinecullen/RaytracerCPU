@@ -139,11 +139,11 @@ int main(int argc, char** argv)
 			}
 
 			Diagnostic *diag = new Diagnostic(s, stoi(argv[3]), stoi(argv[4]));
-			diag->pixelColor(stoi(argv[5]), stoi(argv[6]));
+			diag->printrays(stoi(argv[5]), stoi(argv[6]));
 		}
 		else
 		{
-			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height> <x> <y>" << endl;
+			cout << "Invalid run commands: ./raytrace printrays <input_filename> <width> <height> <x> <y>" << endl;
 			return -1;
 		}
 
