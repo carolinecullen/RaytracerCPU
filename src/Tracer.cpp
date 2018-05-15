@@ -95,6 +95,9 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 	for(auto so: scene->sceneObjects)
 	{
 		hldVal = so->intersect(*incRay);
+		// cout << "id: " << so->id << endl;
+		// cout << "hldval: " << hldVal << endl;
+		// cout << "---------" << endl;
 		if(hldVal > 0)
 		{
 			if(hldVal < retVal)
@@ -107,8 +110,11 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 
 	if(obj == NULL)
 	{
-		cout << "No intersection." << endl;
-		cout << "Extra Info: into-air" << endl;
+		if(print)
+		{
+			cout << "No intersection." << endl;
+			cout << "Extra Info: into-air" << endl;
+		}
 		return vec3(0.f);
 	}
 
@@ -165,15 +171,14 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 				float refProd = dot(incRay->direction, normVec);
 				vec3 reflectVec = (incRay->direction) - (2.f*(refProd)*normVec);
 				ray *pass = new ray((intersectPt + reflectVec * 0.001f), reflectVec);
-				reflectColor = getColor(pass, recCount-1, print);
+				reflectColor = getColor(pass, recCount-1, print) * obj->pigment;
 			}
 
 			
 			if(obj->refraction > 0)
 			{
 				ray* refractRay = calcRefractionRay(incRay->direction, normVec, intersectPt, obj, print);
-				vec3 refractColor = getColor(refractRay, recCount-1, print);
-				refractionColor = (refractColor * obj->filter) * obj->pigment;
+				refractionColor = getColor(refractRay, recCount-1, print) * obj->pigment;
 			}
 
 			diffuse = (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color);
@@ -224,7 +229,7 @@ ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectP
 	float sqrtVal = 1-(snell*snell)*(1 - directionDot*directionDot);
 
 	vec3 refractVec = snell*(rayDirection-directionDot*normVec)-normVec*sqrt(sqrtVal);
-	return (new ray((intersectPt + refractVec * 0.001f), refractVec));
+	return (new ray((intersectPt + (refractVec * 0.001f)), refractVec));
 }
 
 
