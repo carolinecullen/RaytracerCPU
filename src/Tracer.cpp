@@ -146,7 +146,6 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 
 		if(!inShadow)
 		{
-			vec3 normVec;
 			if(obj->type == "Plane")
 			{
 				Plane * pPtr = (Plane *) obj;
@@ -204,7 +203,6 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 		cout << "Reflection: {" << reflectColor.x << " " << reflectColor.y << " " << reflectColor.z << "}" << endl;
 		cout << "Refraction: {" << refractionColor.x << " " << refractionColor.y << " " << refractionColor.z << "}" << endl;
 		cout << "----" << endl;
-		// cout << "Color: " << obj->pigment.x << " " << obj->pigment.y << " " << obj->pigment.z << endl;
 	}
 
 	return outcolor;
@@ -216,6 +214,7 @@ ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectP
 	float n1 = 1.f;
 	float n2 = obj->ior;
 
+	// if the ray is coming out of the sphere
 	if (dot(normVec, rayDirection) > 0) 
 	{
 		n1 = n2;
