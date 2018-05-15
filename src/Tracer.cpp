@@ -240,7 +240,6 @@ void Tracer::traceRays()
  	const string fileName = "output.png";
 	unsigned char *data = new unsigned char[size.x * size.y * numChannels];
 
-	
 	for (int j = 0; j < size.y; ++ j)
 	{
 	    for (int i = 0; i < size.x; ++ i)

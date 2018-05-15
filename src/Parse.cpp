@@ -209,7 +209,24 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 
 		if(tok == "finish")
 		{	
+			char cur = buf[buf.size()-1];
+			bool flag = false;
+			if(cur == '}')
+			{
+				
+				char cur2 = buf[buf.size()-2];
+				if(cur2 == '}')
+				{
+					flag = true;
+				}
+				
+			}
+
 			parse_sphere_finish(s, buf);
+			if(flag)
+			{
+				return s;
+			}
 		}
 
 		if(tok == "translate")
@@ -250,8 +267,23 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 
 		if(tok == "finish")
 		{
-
+			char cur = buf[buf.size()-1];
+			bool flag = false;
+			if(cur == '}')
+			{
+				
+				char cur2 = buf[buf.size()-2];
+				if(cur2 == '}')
+				{
+					flag = true;
+				}
+				
+			}
 			parse_plane_finish(p, buf);
+			if(flag)
+			{
+				return p;
+			}
 		}
 		buf = "";	
 	}
