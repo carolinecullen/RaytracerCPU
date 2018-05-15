@@ -69,7 +69,7 @@ void Sphere::createSphere(vec3 c, float r, vec3 t)
 
 void Sphere::calcNormal(glm::vec3 v)
 {
-	this->normal = v - this->center;
+	this->normal = normalize(v - this->center);
 }
 
 

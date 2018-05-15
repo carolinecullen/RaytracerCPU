@@ -138,8 +138,8 @@ int main(int argc, char** argv)
 				return -1;
 			}
 
-			Diagnostic *diag = new Diagnostic(s, stoi(argv[3]), stoi(argv[4]));
-			diag->printrays(stoi(argv[5]), stoi(argv[6]));
+			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+			tracer->printrays(stoi(argv[5]), stoi(argv[6]));
 		}
 		else
 		{

@@ -18,9 +18,11 @@ class Tracer {
 
 		void castRays();
 		void traceRays();
-		glm::vec3 getColor(ray*, int);
-		ray* calcRefractionRay(glm::vec3, glm::vec3, glm::vec3, Object*);
-		float checkForIntersection(glm::vec3, glm::vec3);
+		void printrays(int, int);
+		glm::vec3 getColor(ray*, int, bool);
+
+		ray* calcRefractionRay(glm::vec3, glm::vec3&, glm::vec3, Object*, bool);
+		float checkForIntersection(glm::vec3, glm::vec3, Object *);
 		float computeDiffuse(glm::vec3, Object*, glm::vec3, glm::vec3);
 		float computeSpecular(glm::vec3, Object*, glm::vec3, glm::vec3);
 
