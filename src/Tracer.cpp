@@ -118,7 +118,6 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 		return vec3(0.f);
 	}
 
-
 	vec3 intersectPt = incRay->location + incRay->direction*retVal;
 	vec3 ambient = obj->pigment * obj->ambient;
 	float val = numeric_limits<float>::max();
@@ -178,7 +177,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 			if(obj->refraction > 0)
 			{
 				ray* refractRay = calcRefractionRay(incRay->direction, normVec, intersectPt, obj, print);
-				refractionColor = getColor(refractRay, recCount-1, print) * obj->pigment;
+				refractionColor = getColor(refractRay, recCount-1, print);
 			}
 
 			diffuse = (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color);
@@ -226,7 +225,7 @@ ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectP
 
 	float directionDot = dot(rayDirection, normVec);
 	float snell = n1/n2;
-	float sqrtVal = 1-(snell*snell)*(1 - directionDot*directionDot);
+	float sqrtVal = 1-(snell*snell)*(1 - pow(directionDot,2));
 
 	vec3 refractVec = snell*(rayDirection-directionDot*normVec)-normVec*sqrt(sqrtVal);
 	return (new ray((intersectPt + (refractVec * 0.001f)), refractVec));

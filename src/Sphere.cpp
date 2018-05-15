@@ -36,7 +36,14 @@ float Sphere::intersect(const ray &r)
 		float val2 = (-B - discriminant)/(2*A);
 		if(val2>val1)
 		{
-			return val1;
+			if(val1 <= 0)
+			{
+				return val2;
+			}
+			else
+			{
+				return val1;
+			}	
 		}
 		else
 		{
