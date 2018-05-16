@@ -28,27 +28,23 @@ float Sphere::intersect(const ray &r)
 	float B = 2*dot(distance, r.direction);
 	float C = dot(distance, distance) - (pow(radius, 2.0));
 	float discriminant = (pow(B, 2))-(4*(A*C));
-	discriminant = sqrt(discriminant);
 
 	if (discriminant > 0) 
 	{
-		float val1 = (-B + discriminant)/(2*A);
-		float val2 = (-B - discriminant)/(2*A);
-		if(val2>val1)
-		{
-			if(val1 < 0)
-			{
-				return val2;
-			}
-			else
-			{
-				return val1;
-			}	
-		}
-		else
+		discriminant = sqrt(discriminant);
+		float val2 = (-B + discriminant)/(2*A);
+		float val1 = (-B - discriminant)/(2*A);
+
+		if(val1 < 0)
 		{
 			return val2;
 		}
+		else
+		{
+			return val1;
+		}	
+
+		return val2;
 	}
 	else if (discriminant==0) 
 	{
