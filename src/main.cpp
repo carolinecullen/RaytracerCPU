@@ -1,5 +1,6 @@
 #include "Parse.hpp"
 #include <iostream>
+#include <string>
 #include <glm/glm.hpp>
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +23,7 @@ int main(int argc, char** argv)
    	cout << std::setprecision(4);
    	
 	Scene *s = new Scene();
-
+	int flagParam = 0;
 	if(strcmp(argv[1], "render") == 0)
 	{
 		if(argc == 6 || argc == 5)
@@ -31,9 +32,38 @@ int main(int argc, char** argv)
 			{
 				return -1;
 			}
+			if(argc == 6)
+			{
+				string flag(argv[5]);
+				if(argv[5][0] == '-')
+				{
+
+					flag = flag.substr(1);
+					if(flag.compare("fresnel") == 0)
+					{
+						flagParam = 1;
+					}
+					else if(flag.compare("beers") == 0)
+						flagParam = 2;
+				}	
+				else
+				{
+					cout << "Invalid arguments: flags require a '-' command" << endl;
+					return -1;
+				}
+				if(flag.find("ss") != -1)
+				{
+					int sspos = flag.find("=");
+					int ssint = flag.at(sspos+1)-'0';
+					Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+					tracer->traceRaysSuper(ssint);
+					return 0;
+				}
+			}
+			
 
 			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-			tracer->traceRays();
+			tracer->traceRays(flagParam);
 		}
 		else
 		{

@@ -44,7 +44,7 @@ float Tracer::checkForIntersection(vec3 pt, vec3 lRay, Object* obj)
 		}
 	}
 
-	if(hldVal == -1) //|| (hitID == -1)) 
+	if(hldVal == -1)
 	{
 		return -1;
 	}
@@ -95,9 +95,6 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 	for(auto so: scene->sceneObjects)
 	{
 		hldVal = so->intersect(*incRay);
-		// cout << "id: " << so->id << endl;
-		// cout << "hldval: " << hldVal << endl;
-		// cout << "---------" << endl;
 		if(hldVal > 0)
 		{
 			if(hldVal < retVal)
@@ -231,7 +228,7 @@ ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectP
 }
 
 
-void Tracer::traceRays()
+void Tracer::traceRays(int flag)
 {
 
 	const int numChannels = 3;
@@ -265,6 +262,48 @@ void Tracer::traceRays()
 	
 }
 
+void Tracer::traceRaysSuper(int numSamples)
+{
+
+	const int numChannels = 3;
+ 	const glm::ivec2 size = glm::ivec2(width, height);
+ 	const string fileName = "output.png";
+	unsigned char *data = new unsigned char[size.x * size.y * numChannels];
+
+	for (int j = 0; j < size.y; ++ j)
+	{
+	    for (int i = 0; i < size.x; ++ i)
+	    {
+	    	vec3 color = vec3(0.f);
+	    	for (int n = 0; n < numSamples; ++ n)
+			{
+			    for (int m = 0; m < numSamples; ++ m)
+			    {
+			    	float pixelX = (float)((-0.5) + ((m + 0.5)/numSamples));
+			    	float pixelY = (float)((-0.5) + ((n + 0.5)/numSamples));
+					float Us = (float)((-0.5) + ((i + 0.5 + pixelX)/width));
+					float Vs = (float)((-0.5) + ((j + 0.5 + pixelY)/height));
+
+					vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
+					vec3 dir = normalize(((float)Us * scene->cam->right) + ((float)Vs * scene->cam->up) + w*(1.0f));
+					ray *r = new ray(scene->cam->location, dir);
+					
+					color += getColor(r, 6, false);
+				}
+			}
+
+			color = color/((float)(numSamples*numSamples));
+			data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
+	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
+	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
+								
+		}
+	}
+
+	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
+	
+}
+
 void Tracer::printrays(int x, int y)
 {
 	cout << "Pixel: [" << x << ", " << y << "]\n----" << endl ;
@@ -274,14 +313,7 @@ void Tracer::printrays(int x, int y)
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 	ray *r = new ray(scene->cam->location, dir);
-
-	// cout << "Ray: {";
-	// cout << r->location.x << " " << r->location.y << " " << r->location.z << "} -> {";
-	// cout << r->direction.x << " " << r->direction.y << " " << r->direction.z << "}" << endl;
-	
 	vec3 color = getColor(r, 6, true);	
-
-	// cout << "Color: " << color.x << " " << color.y << " " << color.z << endl;	
 	cout << "--------------------------------------------------------" << endl;	
 }
 

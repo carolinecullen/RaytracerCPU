@@ -17,9 +17,10 @@ class Tracer {
 		Tracer(Scene *, int, int);
 
 		void castRays();
-		void traceRays();
+		void traceRays(int);
 		void printrays(int, int);
 		glm::vec3 getColor(ray*, int, bool);
+		void traceRaysSuper(int);
 
 		ray* calcRefractionRay(glm::vec3, glm::vec3&, glm::vec3, Object*, bool);
 		float checkForIntersection(glm::vec3, glm::vec3, Object *);
