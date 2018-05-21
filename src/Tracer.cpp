@@ -6,6 +6,7 @@
 #include "Plane.hpp"
 #include "Sphere.hpp"
 #include "Triangle.hpp"
+#include "Diagnostic.hpp"
 
 using namespace std; 
 using namespace glm;
@@ -293,6 +294,9 @@ void Tracer::traceRaysSuper(int numSamples)
  	const glm::ivec2 size = glm::ivec2(width, height);
  	const string fileName = "output.png";
 	unsigned char *data = new unsigned char[size.x * size.y * numChannels];
+
+	Diagnostic *diag = new Diagnostic(scene, 0, 0);
+	diag->sceneInfo();
 
 	for (int j = 0; j < size.y; ++ j)
 	{
