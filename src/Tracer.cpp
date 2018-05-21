@@ -81,7 +81,15 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 	return diff;  
 }
 
-vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
+float Tracer::calcFresnel(float ior, vec3 d, vec3 norm)
+{
+	float f0 = (float)(pow((ior-1), 2)/pow((ior+1), 2));
+	float dotprod = (float)(1 - abs(dot(norm, d)));
+	return (f0 + ((1-f0) * pow(dotprod, 5)));
+}
+
+// FLAG :: 1 - fresnel, 2 - beers
+vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag)
 {
 	if (recCount <= 0)
 	{
@@ -125,10 +133,11 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 	vec3 refractionColor = vec3(0.f);
 	vec3 reflectColor = vec3(0.f);
 	vec3 normVec;
+	vec3 lightvec;
 	for(auto l: scene->lights)
 	{
 		bool inShadow = false;
-		vec3 lightvec = normalize(l->location - intersectPt);
+		lightvec = normalize(l->location - intersectPt);
 		ray *testRay = new ray(intersectPt, lightvec);
 		val = checkForIntersection(intersectPt + 0.001f*testRay->direction, lightvec, obj);
 
@@ -166,14 +175,14 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 				float refProd = dot(incRay->direction, normVec);
 				vec3 reflectVec = (incRay->direction) - (2.f*(refProd)*normVec);
 				ray *pass = new ray((intersectPt + reflectVec * 0.001f), reflectVec);
-				reflectColor = getColor(pass, recCount-1, print) * obj->pigment;
+				reflectColor = getColor(pass, recCount-1, print, flag) * obj->pigment;
 			}
 
 			
 			if(obj->refraction > 0)
 			{
 				ray* refractRay = calcRefractionRay(incRay->direction, normVec, intersectPt, obj, print);
-				refractionColor = getColor(refractRay, recCount-1, print);
+				refractionColor = getColor(refractRay, recCount-1, print, flag);
 			}
 
 			diffuse = (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color);
@@ -181,8 +190,24 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print)
 		}
 	}
 
-	vec3 localcolor = (ambient + diffuse + specular) * (1 - obj->filter) * (1 - obj->reflection);
-	outcolor = localcolor + reflectColor*(obj->reflection)*(1 - obj->filter) + refractionColor*(obj->filter);
+	vec3 localcolor = (ambient + diffuse + specular);
+	float localContribution = (1 - obj->filter) * (1 - obj->reflection);
+	float reflectionContribution, transmissionContribution;
+
+	if(flag == 1)
+	{
+		float fresnelReflectance = calcFresnel(obj->ior, -(incRay->direction), normVec);
+		cout << fresnelReflectance << endl;
+		reflectionContribution = ((obj->reflection) * (1 - obj->filter)) + (obj->filter * fresnelReflectance);
+		transmissionContribution = (obj->filter) * (1 - fresnelReflectance);
+	}
+	else
+	{
+		reflectionContribution = (obj->reflection) * (1 - obj->filter);
+		transmissionContribution = (obj->filter);
+	}
+
+	outcolor = localcolor*localContribution + reflectColor*reflectionContribution + refractionColor*transmissionContribution;
 
 	if(print)
 	{
@@ -227,7 +252,7 @@ ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectP
 	return (new ray((intersectPt + (refractVec * 0.001f)), refractVec));
 }
 
-
+// FLAG :: 1 - fresnel, 2 - beers
 void Tracer::traceRays(int flag)
 {
 
@@ -249,7 +274,7 @@ void Tracer::traceRays(int flag)
 			ray *r = new ray(scene->cam->location, dir);
 
 			
-			vec3 color = getColor(r, 6, false);
+			vec3 color = getColor(r, 6, false, flag);
 			data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
@@ -288,7 +313,7 @@ void Tracer::traceRaysSuper(int numSamples)
 					vec3 dir = normalize(((float)Us * scene->cam->right) + ((float)Vs * scene->cam->up) + w*(1.0f));
 					ray *r = new ray(scene->cam->location, dir);
 					
-					color += getColor(r, 6, false);
+					color += getColor(r, 6, false, 0);
 				}
 			}
 
@@ -313,7 +338,7 @@ void Tracer::printrays(int x, int y)
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 	ray *r = new ray(scene->cam->location, dir);
-	vec3 color = getColor(r, 6, true);	
+	vec3 color = getColor(r, 6, true, 0);	
 	cout << "--------------------------------------------------------" << endl;	
 }
 

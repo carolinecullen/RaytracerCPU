@@ -134,7 +134,7 @@ void Diagnostic::pixelColor(int x, int y)
 
 	
 	Tracer *t = new Tracer(scene, width, height);
-	vec3 color = t->getColor(r, 1, false);
+	vec3 color = t->getColor(r, 1, false, 0);
 	data[0] = (unsigned int) round(color.x * 255.f);
     data[1] = (unsigned int) round(color.y * 255.f);
     data[2] = (unsigned int) round(color.z * 255.f);
