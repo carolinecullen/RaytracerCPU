@@ -396,7 +396,7 @@ void Parse::parse_sphere_finish(Sphere *sphere, string buf)
 	int i = 0;
 	for(string s; iss >> s; )
 	{
-		if(s == "{ambient")
+		if(s == "{ambient" || s == "ambient")
 		{
 			sphere->ambient = nums[i];
 			i++;
@@ -446,7 +446,7 @@ void Parse::parse_triangle_finish(Triangle *t, string buf)
 	int i = 0;
 	for(string s; iss >> s; )
 	{
-		if(s == "{ambient")
+		if(s == "{ambient" || s == "ambient")
 		{
 			t->ambient = nums[i];
 			i++;
@@ -495,7 +495,7 @@ void Parse::parse_plane_finish(Plane *p, string buf)
 	int i = 0;
 	for(string s; iss >> s; )
 	{
-		if(s == "{ambient")
+		if(s == "{ambient" || s == "ambient")
 		{
 			p->ambient = nums[i];
 			i++;

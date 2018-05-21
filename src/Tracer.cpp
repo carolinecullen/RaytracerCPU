@@ -85,7 +85,7 @@ float Tracer::calcFresnel(float ior, vec3 d, vec3 norm)
 {
 	float f0 = (float)(pow((ior-1), 2)/pow((ior+1), 2));
 	float dotprod = (float)(1 - abs(dot(norm, d)));
-	return (f0 + ((1-f0) * pow(dotprod, 5)));
+	return (float)(f0 + ((1-f0) * pow(dotprod, 5)));
 }
 
 // FLAG :: 1 - fresnel, 2 - beers
@@ -179,7 +179,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag)
 			}
 
 			
-			if(obj->refraction > 0)
+			if(obj->filter > 0)
 			{
 				ray* refractRay = calcRefractionRay(incRay->direction, normVec, intersectPt, obj, print);
 				refractionColor = getColor(refractRay, recCount-1, print, flag);
@@ -197,17 +197,16 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag)
 	if(flag == 1)
 	{
 		float fresnelReflectance = calcFresnel(obj->ior, -(incRay->direction), normVec);
-		cout << fresnelReflectance << endl;
 		reflectionContribution = ((obj->reflection) * (1 - obj->filter)) + (obj->filter * fresnelReflectance);
 		transmissionContribution = (obj->filter) * (1 - fresnelReflectance);
 	}
 	else
 	{
 		reflectionContribution = (obj->reflection) * (1 - obj->filter);
-		transmissionContribution = (obj->filter);
+		transmissionContribution = (obj->filter); 
 	}
 
-	outcolor = localcolor*localContribution + reflectColor*reflectionContribution + refractionColor*transmissionContribution;
+	outcolor = (localcolor*localContribution) + (reflectColor*reflectionContribution) + (refractionColor*transmissionContribution);
 
 	if(print)
 	{
