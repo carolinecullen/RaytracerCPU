@@ -15,6 +15,7 @@ Sphere::Sphere()
 	this->ambient = 0.f;
 	this->diffuse = 0.f;
 	this->ior = 0.f;
+	this->id = -1;
 	this->refraction = 0.f;
 	this->reflection = 0.f;
 	this->normal = vec3(0.f);

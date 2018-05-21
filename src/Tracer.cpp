@@ -83,7 +83,7 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 
 float Tracer::calcFresnel(float ior, vec3 d, vec3 norm)
 {
-	float f0 = (float)(pow((ior-1), 2)/pow((ior+1), 2));
+	float f0 = (float)(pow(((ior-1)/(ior+1)), 2));
 	float dotprod = (float)(1 - abs(dot(norm, d)));
 	return (float)(f0 + ((1-f0) * pow(dotprod, 5)));
 }

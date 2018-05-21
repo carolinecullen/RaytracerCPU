@@ -18,6 +18,7 @@ Triangle::Triangle()
 	this->ior = 0.f;
 	this->reflection = 0.f;
 	this->refraction = 0.f;
+	this->id = -1;
 }
 
 float Triangle::intersect(const ray &r)
