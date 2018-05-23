@@ -156,7 +156,6 @@ Triangle* Parse::triangleInsertion(ifstream &FileHandle, string line)
 	string buf;
 	while((tok = Parse::tokenizeHelper(FileHandle, buf)) != "}")
 	{
-
 		if(tok == "pigment")
 		{
 			parse_triangle_pigment(t, buf);
@@ -202,17 +201,9 @@ Triangle* Parse::triangleInsertion(ifstream &FileHandle, string line)
 		buf = "";	
 	}
 
-	if(aVals.size() == 9)
-	{
-		t->A = vec3(aVals[0], aVals[1], aVals[2]);
-		t->B = vec3(aVals[3], aVals[4], aVals[5]);
-		t->C = vec3(aVals[6], aVals[7], aVals[8]);
-	}
-	else
-	{
-		cout << "Must have 3 verticies to form a triangle." << endl;
-		return NULL;
-	}
+	t->A = vec3(aVals[0], aVals[1], aVals[2]);
+	t->B = vec3(aVals[3], aVals[4], aVals[5]);
+	t->C = vec3(aVals[6], aVals[7], aVals[8]);
 
 	t->IM = inverse(t->M);
 	return t;

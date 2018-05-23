@@ -160,10 +160,6 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 		lightvec = normalize(l->location - intersectPt);
 		ray *lRay = new ray(intersectPt, lightvec);
 
-		// vec3 tranl = vec3(obj->IM * vec4(lRay->location, 1.0f));
-		// vec3 trand = vec3(obj->IM * vec4(lRay->direction, 0.0f));
-		// ray *testRay = new ray(tranl, trand);
-
 		val = checkForIntersection(intersectPt + 0.001f*lRay->direction, lightvec, obj);
 
 		if(val != -1)
