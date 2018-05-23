@@ -24,6 +24,9 @@ public:
 	float refraction;
 	int id;
 
+	glm::mat4 M;
+	glm::mat4 IM;
+
 	Object() {};
 
 	virtual float intersect(const ray &r) = 0;

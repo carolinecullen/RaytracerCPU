@@ -6,6 +6,7 @@
 #include "Sphere.hpp"
 #include "Plane.hpp"	
 #include "Triangle.hpp"
+#include "glm/gtc/matrix_transform.hpp"	
 using namespace std;
 using namespace glm;
 
@@ -160,6 +161,32 @@ Triangle* Parse::triangleInsertion(ifstream &FileHandle, string line)
 		{
 			parse_triangle_pigment(t, buf);
 		} 
+
+		if(tok == "scale")
+		{
+			vector<float> nums;
+			nums = Parse::getFloats(buf);
+			vec3 s = vec3(nums[0], nums[1], nums[2]);
+			t->M = scale(mat4(1.0f), s) * t->M;
+		}
+
+		if(tok == "rotate")
+		{
+			vector<float> nums;
+			nums = Parse::getFloats(buf);
+			vec3 r = vec3(radians(nums[0]), radians(nums[1]), radians(nums[2]));
+         	t->M = glm::rotate(mat4(1.0f), r.z, vec3(0, 0, 1)) * t->M;
+         	t->M = glm::rotate(mat4(1.0f), r.y, vec3(0, 1, 0)) * t->M;
+			t->M = glm::rotate(mat4(1.0f), r.x, vec3(1, 0, 0)) * t->M;
+		}
+
+		if(tok == "translate")
+		{
+			vector<float> nums;
+			nums = Parse::getFloats(buf);
+			vec3 tr = vec3(nums[0], nums[1], nums[2]);
+			t->M = translate(mat4(1.0f), tr) * t->M;
+		}
 		else if(tok == "finish")
 		{
 			parse_triangle_finish(t, buf);
@@ -187,6 +214,7 @@ Triangle* Parse::triangleInsertion(ifstream &FileHandle, string line)
 		return NULL;
 	}
 
+	t->IM = inverse(t->M);
 	return t;
 }
 
@@ -202,9 +230,33 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 	string buf;
 	while((tok = Parse::tokenizeHelper(FileHandle, buf)) != "}")
 	{
+		vector<float> fNums;
 		if(tok == "pigment")
 		{
 			parse_sphere_pigment(s, buf);
+		}
+
+		if(tok == "scale")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 sc = vec3(fNums[0], fNums[1], fNums[2]);
+			s->M = scale(mat4(1.0f), sc) * s->M;
+		}
+
+		if(tok == "rotate")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 r = vec3(radians(fNums[0]), radians(fNums[1]), radians(fNums[2]));
+         	s->M = rotate(mat4(1.0f), r.z, vec3(0, 0, 1)) * s->M;
+         	s->M = rotate(mat4(1.0f), r.y, vec3(0, 1, 0)) * s->M;
+			s->M = rotate(mat4(1.0f), r.x, vec3(1, 0, 0)) * s->M;
+		}
+
+		if(tok == "translate")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 t = vec3(fNums[0], fNums[1], fNums[2]);
+			s->M = translate(mat4(1.0f), t) * s->M;
 		}
 
 		if(tok == "finish")
@@ -229,21 +281,10 @@ Sphere* Parse::sphereInsertion(ifstream &FileHandle, string line)
 			}
 		}
 
-		if(tok == "translate")
-		{
-			vector<float> tranVals;
-			tranVals = Parse::getFloats(buf);
-
-			if(tranVals.size() > 3 || tranVals.size() < 3)
-			{
-				cout << "Malformed Camera translate in POV file." << endl;
-				return NULL;
-			}
-			s->translate = vec3(tranVals[0], tranVals[1], tranVals[2]);
-		}
-
 		buf = "";	
 	}
+
+	s->IM = inverse(s->M);
 
 	return s;
 }
@@ -260,9 +301,33 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 	string buf;
 	while((tok = Parse::tokenizeHelper(FileHandle, buf)) != "}")
 	{
+		vector<float> fNums;
 		if(tok == "pigment")
 		{
 			parse_plane_pigment(p, buf);
+		}
+
+		if(tok == "scale")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 s = vec3(fNums[0], fNums[1], fNums[2]);
+			p->M = glm::scale(mat4(1.0f), s) * p->M;
+		}
+
+		if(tok == "rotate")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 rotation = vec3(radians(fNums[0]), radians(fNums[1]), radians(fNums[2]));
+         	p->M = rotate(mat4(1.0f), rotation.z, vec3(0.f, 0.f, 1.f)) * p->M;
+         	p->M = rotate(mat4(1.0f), rotation.y, vec3(0.f, 1.f, 0.f)) * p->M;
+			p->M = rotate(mat4(1.0f), rotation.x, vec3(1.f, 0.f, 0.f)) * p->M;
+		}
+
+		if(tok == "translate")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 t = vec3(fNums[0], fNums[1], fNums[2]);
+			p->M = translate(mat4(1.0f), t) * p->M;
 		}
 
 		if(tok == "finish")
@@ -287,6 +352,8 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 		}
 		buf = "";	
 	}
+
+	p->IM = inverse(p->M);
 
 	return p;
 }

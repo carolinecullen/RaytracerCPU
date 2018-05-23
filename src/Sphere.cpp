@@ -7,7 +7,6 @@ Sphere::Sphere()
 {
 	this->radius = 0.f;
 	this->center = vec3(0.f);
-	this->translate = vec3(0.f);
 	this->pigment = vec3(-1.0f);
 	this->filter = 0.f;
 	this->roughness = 0.f;
@@ -19,6 +18,7 @@ Sphere::Sphere()
 	this->refraction = 0.f;
 	this->reflection = 0.f;
 	this->normal = vec3(0.f);
+	this->IM = glm::mat4(1.f);
 }
 
 float Sphere::intersect(const ray &r)
@@ -63,14 +63,6 @@ float Sphere::intersect(const ray &r)
 	
 }
 
-void Sphere::createSphere(vec3 c, float r, vec3 t)
-{
-	this->type = "Sphere";
-	this->radius = r;
-	this->center = c;
-	this->translate = t;
-}
-
 void Sphere::calcNormal(glm::vec3 v)
 {
 	this->normal = normalize(v - this->center);
@@ -84,6 +76,10 @@ void Sphere::print()
 	cout << "- Radius: " << radius << endl;
 	cout << "- Color: {" << pigment.x << " " << pigment.y << " " << pigment.z << "}" << endl;
 	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular << endl << "  - Roughness: " << roughness << endl << "  - IOR: " << ior << endl << "  - Reflection: " << reflection << endl << "  - Refraction: " << refraction << endl;
-
+	cout << " - Model Transform: " << endl;
+    cout << "  " << IM[0][0] << " " << IM[1][0] << " " << IM[2][0] << " " << IM[3][0] << endl;
+    cout << "  " << IM[0][1] << " " << IM[1][1] << " " << IM[2][1] << " " << IM[3][1] << endl;
+    cout << "  " << IM[0][2] << " " << IM[1][2] << " " << IM[2][2] << " " << IM[3][2] << endl;
+	cout << "  " << IM[0][3] << " " << IM[1][3] << " " << IM[2][3] << " " << IM[3][3] << endl;
 	cout << endl;
 }

@@ -19,6 +19,7 @@ Triangle::Triangle()
 	this->reflection = 0.f;
 	this->refraction = 0.f;
 	this->id = -1;
+	this->IM = glm::mat4(1.f);
 }
 
 float Triangle::intersect(const ray &r)
@@ -91,6 +92,11 @@ void Triangle::print()
 	cout << "  - C = {" << C.x << " " << C.y << " " << C.z << "}" << endl;
 	cout << "- Color: {" << pigment.x << " " << pigment.y << " " << pigment.z << "}" << endl;
 	cout << "- Material: " << endl << "  - Ambient: " << ambient << endl << "  - Diffuse: " << diffuse << endl << "  - Specular: " << specular << endl << "  - Roughness: " << roughness << endl << "  - IOR: " << ior << endl << "  - Reflection: " << reflection << endl << "  - Refraction: " << refraction << endl;
+	cout << " - Model Transform: " << endl;
+    cout << "  " << IM[0][0] << " " << IM[1][0] << " " << IM[2][0] << " " << IM[3][0] << endl;
+    cout << "  " << IM[0][1] << " " << IM[1][1] << " " << IM[2][1] << " " << IM[3][1] << endl;
+    cout << "  " << IM[0][2] << " " << IM[1][2] << " " << IM[2][2] << " " << IM[3][2] << endl;
+	cout << "  " << IM[0][3] << " " << IM[1][3] << " " << IM[2][3] << " " << IM[3][3] << endl;
 
 	cout << endl;
 }

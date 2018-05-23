@@ -84,13 +84,13 @@ float Tracer::computeDiffuse(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 
 float Tracer::calcFresnel(float ior, vec3 d, vec3 norm)
 {
-	float f0 = (float)(pow(((ior-1)/(ior+1)), 2));
-	float dotprod = (float)(1 - abs(dot(norm, d)));
-	return (float)(f0 + ((1-f0) * pow(dotprod, 5)));
+	float f0 = (float)(pow((ior-1.f), 2)/pow((ior+1.f), 2));
+	float dotprod = (float)(1.f - abs(dot(norm, -d)));
+	return (float)(f0 + ((1.f-f0) * pow(dotprod, 5.f)));
 }
 
 // FLAG :: 1 - fresnel, 2 - beers
-vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag)
+vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_val)
 {
 	if (recCount <= 0)
 	{
@@ -124,7 +124,13 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag)
 		return vec3(0.f);
 	}
 
+	vec3 objl = vec3(obj->IM * vec4(incRay->location, 1.0f));
+	vec3 objd = vec3(obj->IM * vec4(incRay->direction, 0.0f));
+	ray *objRay = new ray(objl, objd);
+
 	vec3 intersectPt = incRay->location + incRay->direction*retVal;
+	vec3 objPt = objRay->location + objRay->direction*retVal;
+
 	vec3 ambient = obj->pigment * obj->ambient;
 	float val = numeric_limits<float>::max();
 
@@ -157,33 +163,46 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag)
 			{
 				Plane * pPtr = (Plane *) obj;
 				normVec = pPtr->normal;
+				vec3 wNormVec = normalize(vec3(transpose(pPtr->IM) * vec4(normVec, 0.0f)));
+				normVec = wNormVec;
 			}
 			else if (obj->type == "Sphere")
 			{
 				Sphere * sPtr = (Sphere *) obj;
-				sPtr->calcNormal(intersectPt);
+				sPtr->calcNormal(objPt);
 				normVec = sPtr->normal;
+				vec3 wNormVec = normalize(vec3(transpose(sPtr->IM) * vec4(normVec, 0.0f)));
+				normVec = wNormVec;
 			}
 			else
 			{
 				Triangle * tPtr = (Triangle *) obj;
-				tPtr->calcNormal(intersectPt);
+				tPtr->calcNormal(objPt);
 				normVec = tPtr->normal;
+				vec3 wNormVec = normalize(vec3(transpose(tPtr->IM) * vec4(normVec, 0.0f)));
+				normVec = wNormVec;
 			}
 
-			if(obj->reflection > 0)
+			if((obj->reflection > 0) || ((obj->filter > 0) && (flag == 1)))
 			{
 				float refProd = dot(incRay->direction, normVec);
 				vec3 reflectVec = (incRay->direction) - (2.f*(refProd)*normVec);
 				ray *pass = new ray((intersectPt + reflectVec * 0.001f), reflectVec);
-				reflectColor = getColor(pass, recCount-1, print, flag) * obj->pigment;
+				reflectColor = getColor(pass, recCount-1, print, flag, &retVal) * obj->pigment;
 			}
 
 			
 			if(obj->filter > 0)
 			{
 				ray* refractRay = calcRefractionRay(incRay->direction, normVec, intersectPt, obj, print);
-				refractionColor = getColor(refractRay, recCount-1, print, flag);
+				refractionColor = getColor(refractRay, recCount-1, print, flag, &retVal);
+
+				if(flag == 2)
+				{
+					vec3 absorbance = (1.f - refractionColor) * (0.15f) * (retVal - *t_val);
+					vec3 attenuation = exp(absorbance);
+					refractionColor *= attenuation;
+				}
 			}
 
 			diffuse = (computeDiffuse(intersectPt, obj, lightvec, normVec)* obj->pigment *l->color);
@@ -197,7 +216,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag)
 
 	if(flag == 1)
 	{
-		float fresnelReflectance = calcFresnel(obj->ior, -(incRay->direction), normVec);
+		float fresnelReflectance = calcFresnel(obj->ior, (incRay->direction), normVec);
 		reflectionContribution = ((obj->reflection) * (1 - obj->filter)) + (obj->filter * fresnelReflectance);
 		transmissionContribution = (obj->filter) * (1 - fresnelReflectance);
 	}
@@ -274,7 +293,7 @@ void Tracer::traceRays(int flag)
 			ray *r = new ray(scene->cam->location, dir);
 
 			
-			vec3 color = getColor(r, 6, false, flag);
+			vec3 color = getColor(r, 6, false, flag, 0);
 			data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
@@ -295,9 +314,6 @@ void Tracer::traceRaysSuper(int numSamples)
  	const string fileName = "output.png";
 	unsigned char *data = new unsigned char[size.x * size.y * numChannels];
 
-	Diagnostic *diag = new Diagnostic(scene, 0, 0);
-	diag->sceneInfo();
-
 	for (int j = 0; j < size.y; ++ j)
 	{
 	    for (int i = 0; i < size.x; ++ i)
@@ -316,7 +332,7 @@ void Tracer::traceRaysSuper(int numSamples)
 					vec3 dir = normalize(((float)Us * scene->cam->right) + ((float)Vs * scene->cam->up) + w*(1.0f));
 					ray *r = new ray(scene->cam->location, dir);
 					
-					color += getColor(r, 6, false, 0);
+					color += getColor(r, 6, false, 0, 0);
 				}
 			}
 
@@ -324,7 +340,7 @@ void Tracer::traceRaysSuper(int numSamples)
 			data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
-								
+							
 		}
 	}
 
@@ -341,7 +357,7 @@ void Tracer::printrays(int x, int y)
 	vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 	vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 	ray *r = new ray(scene->cam->location, dir);
-	vec3 color = getColor(r, 6, true, 0);	
+	vec3 color = getColor(r, 6, true, 0, 0);	
 	cout << "--------------------------------------------------------" << endl;	
 }
 

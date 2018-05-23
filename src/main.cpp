@@ -54,7 +54,8 @@ int main(int argc, char** argv)
 				if(flag.find("ss") != -1)
 				{
 					int sspos = flag.find("=");
-					int ssint = flag.at(sspos+1)-'0';
+					int ssint = 0;
+					ssint = flag.at(sspos+1)-'0';
 					Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
 					tracer->traceRaysSuper(ssint);
 					return 0;
