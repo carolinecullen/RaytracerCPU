@@ -22,7 +22,7 @@ class Tracer {
 		glm::vec3 getColor(ray*, int, bool, int, float*);
 		void traceRaysSuper(int);
 		float calcFresnel(float, glm::vec3, glm::vec3);
-		ray* calcRefractionRay(glm::vec3, glm::vec3&, glm::vec3, Object*, bool);
+		ray* calcRefractionRay(glm::vec3, glm::vec3&, glm::vec3, Object*, bool, bool&);
 		float checkForIntersection(glm::vec3, glm::vec3, Object *);
 		float computeDiffuse(glm::vec3, Object*, glm::vec3, glm::vec3);
 		float computeSpecular(glm::vec3, Object*, glm::vec3, glm::vec3);

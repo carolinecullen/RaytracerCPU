@@ -149,6 +149,8 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 	vec3 reflectColor = vec3(0.f);
 	vec3 normVec;
 	vec3 lightvec;
+	bool entering = false;
+
 	for(auto l: scene->lights)
 	{
 		bool inShadow = false;
@@ -207,8 +209,13 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 			
 			if(obj->filter > 0)
 			{
-				ray* refractRay = calcRefractionRay(incRay->direction, normVec, intersectPt, obj, print);
+				ray* refractRay = calcRefractionRay(incRay->direction, normVec, intersectPt, obj, print, entering);
 				refractionColor = getColor(refractRay, recCount-1, print, flag, &retVal);
+
+				if(entering)
+				{
+					refractionColor*=obj->pigment;
+				}
 
 				if(flag == 2)
 				{
@@ -263,18 +270,26 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 
 }
 
-ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectPt, Object* obj, bool print)
+ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectPt, Object* obj, bool print, bool& entering)
 {
 	float n1 = 1.f;
 	float n2 = obj->ior;
 
-	// if the ray is coming out of the sphere
+	// if the ray is coming in the sphere
+	if (dot(normVec, rayDirection) < 0)
+	{
+		entering = true;
+	}
+
+	// if the ray is coming out the sphere
 	if (dot(normVec, rayDirection) > 0) 
 	{
 		n1 = n2;
 		n2 = 1.f;
 		normVec = -normVec;
+		entering = false;
 	}
+
 
 	float directionDot = dot(rayDirection, normVec);
 	float snell = n1/n2;
