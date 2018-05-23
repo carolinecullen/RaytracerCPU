@@ -37,6 +37,7 @@ float Tracer::checkForIntersection(vec3 pt, vec3 lRay, Object* obj)
 		vec3 objl = vec3(so->IM * vec4(tRay->location, 1.0f));
 		vec3 objd = vec3(so->IM * vec4(tRay->direction, 0.0f));
 		ray *testRay = new ray(objl, objd);
+		delete tRay;
 
 		hldVal = so->intersect(*testRay);
 		if(hldVal > 0)
@@ -48,6 +49,7 @@ float Tracer::checkForIntersection(vec3 pt, vec3 lRay, Object* obj)
 			}
 
 		}
+		delete testRay;
 	}
 
 	if(hldVal == -1)
@@ -124,6 +126,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 				objRay = checkObjRay;
 			}
 		}
+		delete checkObjRay;
 	}
 
 	if(obj == NULL)
@@ -171,6 +174,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 			}
 		}
 		
+		delete lRay;
 
 		if(!inShadow)
 		{
@@ -204,6 +208,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 				vec3 reflectVec = (incRay->direction) - (2.f*(refProd)*normVec);
 				ray *pass = new ray((intersectPt + reflectVec * 0.001f), reflectVec);
 				reflectColor = getColor(pass, recCount-1, print, flag, &retVal) * obj->pigment;
+				delete pass;
 			}
 
 			
@@ -325,7 +330,7 @@ void Tracer::traceRays(int flag)
 			data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
 	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
-					
+			delete r;	
 				
 		}
 	}
