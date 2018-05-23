@@ -32,7 +32,12 @@ float Tracer::checkForIntersection(vec3 pt, vec3 lRay, Object* obj)
 	int hitID = -1;
 	for(auto so: scene->sceneObjects)
 	{
-		ray *testRay = new ray(pt, lRay);
+		ray *tRay = new ray(pt, lRay);
+
+		vec3 objl = vec3(so->IM * vec4(tRay->location, 1.0f));
+		vec3 objd = vec3(so->IM * vec4(tRay->direction, 0.0f));
+		ray *testRay = new ray(objl, objd);
+
 		hldVal = so->intersect(*testRay);
 		if(hldVal > 0)
 		{
@@ -147,13 +152,18 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 	for(auto l: scene->lights)
 	{
 		bool inShadow = false;
-		lightvec = normalize(l->location - objPt);
-		ray *testRay = new ray(objPt, lightvec);
-		val = checkForIntersection(objPt + 0.001f*testRay->direction, lightvec, obj);
+		lightvec = normalize(l->location - intersectPt);
+		ray *lRay = new ray(intersectPt, lightvec);
+
+		// vec3 tranl = vec3(obj->IM * vec4(lRay->location, 1.0f));
+		// vec3 trand = vec3(obj->IM * vec4(lRay->direction, 0.0f));
+		// ray *testRay = new ray(tranl, trand);
+
+		val = checkForIntersection(intersectPt + 0.001f*lRay->direction, lightvec, obj);
 
 		if(val != -1)
 		{
-			if (val < length((l->location) - objPt))
+			if (val < length((l->location) - lRay->direction))
 			{
 				inShadow = true;
 			}
