@@ -126,8 +126,8 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float* t_
 				objRay = checkObjRay;
 			}
 		}
-		delete checkObjRay;
 	}
+	delete checkObjRay;
 
 	if(obj == NULL)
 	{
