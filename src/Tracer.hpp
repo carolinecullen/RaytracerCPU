@@ -23,7 +23,8 @@ class Tracer {
 		void traceRaysSuper(int);
 		float calcFresnel(float, glm::vec3, glm::vec3);
 		ray* calcRefractionRay(glm::vec3, glm::vec3&, glm::vec3, Object*, bool, bool&);
-		float checkForIntersection(glm::vec3, glm::vec3, Object *);
+		//float checkForIntersection(glm::vec3, glm::vec3, Object *);
+		float checkForIntersection(ray *, Object *);
 		float computeDiffuse(glm::vec3, Object*, glm::vec3, glm::vec3);
 		float computeSpecular(glm::vec3, Object*, glm::vec3, glm::vec3);
 

@@ -64,9 +64,9 @@ sphere { <0, 0, 0>, 1.0
 
 // Triangle
 triangle {
-  <0, -3, -5>,
-  <10, 5, 10>,
-  <-10, 5, 10>
+  <14, 11, 8>,
+  <0, -4, 10>,
+  <-14, 11, 8>
   pigment {color rgb <1.0, 1.0, 1.0>}
   finish {ambient 0.4 diffuse 1.0 reflection 0.7}
   rotate <0, 180, 0>
@@ -83,4 +83,10 @@ plane { <0, 0, 1>, -4
 plane { <0, 0, 1>, -100
   pigment {color rgb <0.9, 0.7, 0.8>}
   finish {ambient 0.2 diffuse 0.4}
+}
+
+// Center
+sphere { <0, -2, 0>, 1.0
+  pigment { color rgb <1.0, 1.0, 1.0> }
+  finish {ambient 0.4 diffuse 1.0 reflection 0.7}
 }

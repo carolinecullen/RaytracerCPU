@@ -25,18 +25,20 @@ Tracer::Tracer(Scene *s, int w, int h)
 	this->height = h;
 }
 
-float Tracer::checkForIntersection(vec3 pt, vec3 lRay, Object* obj)
+float Tracer::checkForIntersection(ray * lRay, Object* obj)
+//float Tracer::checkForIntersection(vec3 pt, vec3 lRay, Object* obj)
 {
 	float hldVal = -1;
 	float retVal = numeric_limits<float>::max();
 	int hitID = -1;
 	for(auto so: scene->sceneObjects)
 	{
-		ray *tRay = new ray(pt, lRay);
 
-		vec3 objl = vec3(so->IM * vec4(tRay->location, 1.0f));
-		vec3 objd = vec3(so->IM * vec4(tRay->direction, 0.0f));
-		delete tRay;
+		//vec3 objl = vec3(so->IM * vec4(pt, 1.0f));
+		//vec3 objd = vec3(so->IM * vec4(lRay, 0.0f));
+		vec3 objl = vec3(so->IM * vec4(lRay->location, 1.0f));
+		vec3 objd = vec3(so->IM * vec4(lRay->direction, 0.0f));
+		//delete tRay;
 
 		ray *testRay = new ray(objl, objd);
 
@@ -108,7 +110,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 	float retVal = numeric_limits<float>::max();
 	float hldVal = -1;
 	Object *obj = NULL;
-	ray *objRay;
+	ray *objRay = NULL;
 	ray* checkObjRay;
 
 	for(auto so: scene->sceneObjects)
@@ -122,13 +124,18 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 		{
 			if(hldVal < retVal)
 			{
+				if(objRay != NULL)
+				{
+					delete objRay;
+				}
 				retVal = hldVal;
 				obj = so;
-				objRay = checkObjRay;
+				objRay = new ray(objl, objd);
 			}
 		}
+		delete checkObjRay;
 	}
-	delete checkObjRay;
+
 
 	if(obj == NULL)
 	{
@@ -159,9 +166,11 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 	{
 		bool inShadow = false;
 		lightvec = normalize(l->location - intersectPt);
-		ray *lRay = new ray(intersectPt, lightvec);
+		ray *lRay = new ray(intersectPt + 0.001f*lightvec, lightvec);
+		//ray *lRay = new ray(intersectPt, lightvec);
 
-		val = checkForIntersection(intersectPt + 0.001f*lRay->direction, lightvec, obj);
+		//val = checkForIntersection(intersectPt + 0.001f*lRay->direction, lightvec, obj);
+		val = checkForIntersection(lRay, obj);
 
 		if(val != -1)
 		{
@@ -227,10 +236,9 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 				if(flag == 2 && entering)
 				{
-					cout << t_val << endl;
 					vec3 absorbance = (1.f - refractionColor) * (0.15f) * -(t_val);
 					vec3 attenuation = exp(absorbance);
-					refractionColor *= attenuation;
+					refractionColor = refractionColor * attenuation;
 				}
 			}
 
