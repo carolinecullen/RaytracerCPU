@@ -19,7 +19,7 @@ class Tracer {
 		void castRays();
 		void traceRays(int);
 		void printrays(int, int);
-		glm::vec3 getColor(ray*, int, bool, int, float*);
+		glm::vec3 getColor(ray*, int, bool, int, float&);
 		void traceRaysSuper(int);
 		float calcFresnel(float, glm::vec3, glm::vec3);
 		ray* calcRefractionRay(glm::vec3, glm::vec3&, glm::vec3, Object*, bool, bool&);
