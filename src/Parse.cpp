@@ -152,6 +152,17 @@ Triangle* Parse::triangleInsertion(ifstream &FileHandle, string line)
 
 	vector<float> aVals;
 
+	vector<float> checkFirstLine;
+	checkFirstLine = Parse::getFloats(line);
+
+	if(checkFirstLine.size() > 0)
+	{
+		for(int i = 0; i < checkFirstLine.size(); i++)
+		{
+			aVals.push_back(checkFirstLine[i]);
+		}
+	}
+
 	string tok;
 	string buf;
 	while((tok = Parse::tokenizeHelper(FileHandle, buf)) != "}")
