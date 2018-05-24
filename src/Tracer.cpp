@@ -25,23 +25,20 @@ Tracer::Tracer(Scene *s, int w, int h)
 	this->height = h;
 }
 
-float Tracer::checkForIntersection(ray * lRay, Object* obj)
-//float Tracer::checkForIntersection(vec3 pt, vec3 lRay, Object* obj)
+float Tracer::checkForIntersection(ray * lRay, Object *obj)
 {
 	float hldVal = -1;
 	float retVal = numeric_limits<float>::max();
 	int hitID = -1;
+	Object *initialized = NULL;
+
 	for(auto so: scene->sceneObjects)
 	{
 
-		//vec3 objl = vec3(so->IM * vec4(pt, 1.0f));
-		//vec3 objd = vec3(so->IM * vec4(lRay, 0.0f));
 		vec3 objl = vec3(so->IM * vec4(lRay->location, 1.0f));
 		vec3 objd = vec3(so->IM * vec4(lRay->direction, 0.0f));
-		//delete tRay;
 
 		ray *testRay = new ray(objl, objd);
-
 		hldVal = so->intersect(*testRay);
 		if(hldVal > 0)
 		{
@@ -49,13 +46,14 @@ float Tracer::checkForIntersection(ray * lRay, Object* obj)
 			{
 				retVal = hldVal;
 				hitID = so->id;
+				initialized = so;
 			}
 
 		}
 		delete testRay;
 	}
 
-	if(hldVal == -1)
+	if(initialized == NULL)
 	{
 		return -1;
 	}
@@ -69,6 +67,43 @@ float Tracer::checkForIntersection(ray * lRay, Object* obj)
 		return retVal;
 	}
 }
+
+
+// float Tracer::checkForIntersection(ray * lRay)
+// {
+// 	float retVal = numeric_limits<float>::max();
+// 	float hldVal = -1;
+// 	Object *obj = NULL;
+// 	ray* checkObjRay;
+
+// 	for(auto so: scene->sceneObjects)
+// 	{
+// 		vec3 objl = vec3(so->IM * vec4(lRay->location, 1.0f));
+// 		vec3 objd = vec3(so->IM * vec4(lRay->direction, 0.0f));
+// 		checkObjRay = new ray(objl, objd);
+
+// 		hldVal = so->intersect(*checkObjRay);
+// 		if(hldVal > 0)
+// 		{
+// 			if(hldVal < retVal)
+// 			{
+// 				retVal = hldVal;
+// 				obj = so;
+// 			}
+// 		}
+// 		delete checkObjRay;
+// 	}
+
+
+// 	if(obj == NULL)
+// 	{
+// 		return -1;
+// 	}
+// 	else
+// 	{
+// 		return retVal;
+// 	}
+// }
 
 float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 {
@@ -212,7 +247,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 				float refProd = dot(incRay->direction, normVec);
 				vec3 reflectVec = (incRay->direction) - (2.f*(refProd)*normVec);
 				ray *pass = new ray((intersectPt + reflectVec * 0.001f), reflectVec);
-				reflectColor = getColor(pass, recCount-1, print, flag, retVal) * obj->pigment;
+				reflectColor = getColor(pass, recCount-1, print, flag, t_val) * obj->pigment;
 				delete pass;
 			}
 
@@ -405,6 +440,8 @@ void Tracer::printrays(int x, int y)
 	ray *r = new ray(scene->cam->location, dir);
 	float tf = 0.f;
 	vec3 color = getColor(r, 6, true, 0, tf);	
+
+	cout << "Color: " << "[" << color.x << ", " << color.y << ", " << color.z << "]" << endl;
 	cout << "--------------------------------------------------------" << endl;	
 }
 
