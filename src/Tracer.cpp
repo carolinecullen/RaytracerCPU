@@ -69,41 +69,6 @@ float Tracer::checkForIntersection(ray * lRay, Object *obj)
 }
 
 
-// float Tracer::checkForIntersection(ray * lRay)
-// {
-// 	float retVal = numeric_limits<float>::max();
-// 	float hldVal = -1;
-// 	Object *obj = NULL;
-// 	ray* checkObjRay;
-
-// 	for(auto so: scene->sceneObjects)
-// 	{
-// 		vec3 objl = vec3(so->IM * vec4(lRay->location, 1.0f));
-// 		vec3 objd = vec3(so->IM * vec4(lRay->direction, 0.0f));
-// 		checkObjRay = new ray(objl, objd);
-
-// 		hldVal = so->intersect(*checkObjRay);
-// 		if(hldVal > 0)
-// 		{
-// 			if(hldVal < retVal)
-// 			{
-// 				retVal = hldVal;
-// 				obj = so;
-// 			}
-// 		}
-// 		delete checkObjRay;
-// 	}
-
-
-// 	if(obj == NULL)
-// 	{
-// 		return -1;
-// 	}
-// 	else
-// 	{
-// 		return retVal;
-// 	}
-// }
 
 float Tracer::computeSpecular(vec3 pt, Object* obj, vec3 lightvec, vec3 normal)
 {
@@ -202,18 +167,16 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 		bool inShadow = false;
 		lightvec = normalize(l->location - intersectPt);
 		ray *lRay = new ray(intersectPt + 0.001f*lightvec, lightvec);
-		//ray *lRay = new ray(intersectPt, lightvec);
-
-		//val = checkForIntersection(intersectPt + 0.001f*lRay->direction, lightvec, obj);
 		val = checkForIntersection(lRay, obj);
 
 		if(val != -1)
 		{
-			if (val < length((l->location) - lRay->direction))
+			if (val < distance((lRay->location), lRay->direction))
 			{
 				inShadow = true;
 			}
 		}
+
 		delete lRay;
 
 		if(!inShadow)
