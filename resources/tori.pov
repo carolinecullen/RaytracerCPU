@@ -63,7 +63,7 @@ triangle {
 
 // Floor
 plane { <0, 0, 1>, -4
-  pigment {color rgb <0.7, 0.9, 0.8>}
+  pigment {color rgb <0.7, 0.5, 0.8>}
   finish {ambient 0.4 diffuse 1.0 reflection 0.7}
   rotate <-90, 0, 0>
 }
@@ -71,5 +71,5 @@ plane { <0, 0, 1>, -4
 // Background
 plane { <0, 0, 1>, -100
   pigment {color rgb <0.9, 0.7, 0.8>}
-  finish {ambient 0.2 diffuse 0.4}
+  finish {ambient 0.2 diffuse 0.4 reflection 0.7}
 }
