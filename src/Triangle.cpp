@@ -1,5 +1,6 @@
 #include "Triangle.hpp"
 #include <math.h>
+#include <vector>
 using namespace glm;
 using namespace std;
 
@@ -82,6 +83,46 @@ void Triangle::calcNormal(vec3 pt)
     vec3 lV = C - A;
 
 	this->normal = normalize(vec3(((rV.y*lV.z)-(rV.z*lV.y)), ((rV.z*lV.x)-(rV.x*lV.z)), ((rV.x*lV.y)-(rV.y*lV.x))));
+}
+
+vec3 Triangle::getCenter()
+{
+	return vec3((float)((A.x+B.x+C.x)/2), (float)((A.y+B.y+C.y)/2), (float)((A.z+B.z+C.z)/2));
+}
+
+BBH* Triangle::makeBoundingBox() 
+{
+   BBH* box = new BBH;
+   box->AddPoint(A);
+   box->AddPoint(B);
+   box->AddPoint(C);
+   
+
+   if (box->init()) 
+    {
+        std::vector<vec3> corners;
+	    corners.push_back(vec3(box->min.x, box->min.y, box->min.z));
+	    corners.push_back(vec3(box->min.x, box->min.y, box->max.z));
+	    corners.push_back(vec3(box->min.x, box->max.y, box->min.z));
+	    corners.push_back(vec3(box->min.x, box->max.y, box->max.z));
+	    corners.push_back(vec3(box->max.x, box->min.y, box->min.z));
+	    corners.push_back(vec3(box->max.x, box->min.y, box->max.z));
+	    corners.push_back(vec3(box->max.x, box->max.y, box->min.z));
+	    corners.push_back(vec3(box->max.x, box->max.y, box->max.z));
+
+	    box->min = vec3(-numeric_limits<float>::max());
+	    box->max = vec3( numeric_limits<float>::max());
+
+	    for (int i = 0; i < 8; i++) 
+	    {
+	        corners[i] = vec3(this->M * vec4(corners[i], 1.f));
+	        box->AddPoint(corners[i]);
+	    }
+
+	    box->updateBox(box->min, box->max);
+    }
+
+   return box;
 }
 
 void Triangle::print()

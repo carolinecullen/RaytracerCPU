@@ -8,6 +8,7 @@
 #include "Scene.hpp"
 #include "Plane.hpp"
 #include "Triangle.hpp"
+#include "Box.hpp"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ class Parse
 
 		// static members are independant of objects and can be called with the :: operator 
 
-		static bool tokenParser(std::string, Scene *);
+		static bool tokenParser(std::string, Scene *, bool);
 
 		static Camera* placeCamera(std::ifstream &);
 
@@ -34,15 +35,21 @@ class Parse
 
 		static Plane* planeInsertion(std::ifstream &, std::string);
 
+		static Box* boxInsertion(std::ifstream &, std::string);
+
 		static void parse_plane_finish(Plane *, std::string);
 
 		static void parse_sphere_finish(Sphere *, std::string);
+
+		static void parse_box_finish(Box *, std::string);
 
 		static void parse_triangle_finish(Triangle *, std::string);
 
 		static void parse_plane_pigment(Plane *, std::string);
 
 		static void parse_sphere_pigment(Sphere *, std::string);
+
+		static void parse_box_pigment(Box *, std::string);
 
 		static void parse_triangle_pigment(Triangle *, std::string);
 

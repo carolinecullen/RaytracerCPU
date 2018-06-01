@@ -1,5 +1,6 @@
 #include "Sphere.hpp"
 #include <math.h>
+#include <vector>
 using namespace glm;
 using namespace std;
 
@@ -66,6 +67,49 @@ float Sphere::intersect(const ray &r)
 void Sphere::calcNormal(glm::vec3 v)
 {
 	this->normal = normalize(v - this->center);
+}
+
+vec3 Sphere::getCenter() 
+{
+	return center;
+}
+
+BBH* Sphere::makeBoundingBox() 
+{
+	vec3 min = this->center;
+	vec3 max = this->center;
+	for (int i = 0; i < 3; i++) 
+	{
+		min[i] -= radius;
+		max[i] += radius;
+	}
+	BBH* box = new BBH(min, max);
+
+	if (box->init()) 
+    {
+        std::vector<vec3> corners;
+	    corners.push_back(vec3(box->min.x, box->min.y, box->min.z));
+	    corners.push_back(vec3(box->min.x, box->min.y, box->max.z));
+	    corners.push_back(vec3(box->min.x, box->max.y, box->min.z));
+	    corners.push_back(vec3(box->min.x, box->max.y, box->max.z));
+	    corners.push_back(vec3(box->max.x, box->min.y, box->min.z));
+	    corners.push_back(vec3(box->max.x, box->min.y, box->max.z));
+	    corners.push_back(vec3(box->max.x, box->max.y, box->min.z));
+	    corners.push_back(vec3(box->max.x, box->max.y, box->max.z));
+
+	    box->min = vec3(-numeric_limits<float>::max());
+	    box->max = vec3( numeric_limits<float>::max());
+
+	    for (int i = 0; i < 8; i++) 
+	    {
+	        corners[i] = vec3(this->M * vec4(corners[i], 1.f));
+	        box->AddPoint(corners[i]);
+	    }
+
+	    box->updateBox(box->min, box->max);
+    }
+
+	return box;
 }
 
 

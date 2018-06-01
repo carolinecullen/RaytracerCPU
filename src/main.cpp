@@ -24,14 +24,11 @@ int main(int argc, char** argv)
    	
 	Scene *s = new Scene();
 	int flagParam = 0;
+	bool Bounding = false;
 	if(strcmp(argv[1], "render") == 0)
 	{
 		if(argc == 6 || argc == 5)
 		{
-			if(!Parse::tokenParser(argv[2], s))
-			{
-				return -1;
-			}
 			if(argc == 6)
 			{
 				string flag(argv[5]);
@@ -40,28 +37,36 @@ int main(int argc, char** argv)
 
 					flag = flag.substr(1);
 					if(flag.compare("fresnel") == 0)
-					{
 						flagParam = 1;
-					}
 					else if(flag.compare("beers") == 0)
 						flagParam = 2;
-				}	
+					else if(flag.compare("sds") == 0)
+					{
+						Bounding = true;
+						flagParam = 3;
+					}
+
+					if(flag.find("ss") != -1)
+					{
+						int sspos = flag.find("=");
+						int ssint = 0;
+						ssint = flag.at(sspos+1)-'0';
+						Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
+						tracer->traceRaysSuper(ssint);
+						return 0;
+					}
+				}
 				else
 				{
 					cout << "Invalid arguments: flags require a '-' command" << endl;
 					return -1;
 				}
-				if(flag.find("ss") != -1)
-				{
-					int sspos = flag.find("=");
-					int ssint = 0;
-					ssint = flag.at(sspos+1)-'0';
-					Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-					tracer->traceRaysSuper(ssint);
-					return 0;
-				}
 			}
-			
+
+			if(!Parse::tokenParser(argv[2], s, Bounding))
+			{
+				return -1;
+			}
 
 			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
 			tracer->traceRays(flagParam);
@@ -80,7 +85,7 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		if(!Parse::tokenParser(argv[2], s))
+		if(!Parse::tokenParser(argv[2], s, false))
 		{
 			return -1;
 		}
@@ -96,7 +101,7 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		if(!Parse::tokenParser(argv[2], s))
+		if(!Parse::tokenParser(argv[2], s, false))
 		{
 			return -1;
 		}
@@ -113,7 +118,7 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		if(!Parse::tokenParser(argv[2], s))
+		if(!Parse::tokenParser(argv[2], s, false))
 		{
 			return -1;
 		}
@@ -129,7 +134,7 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		if(!Parse::tokenParser(argv[2], s))
+		if(!Parse::tokenParser(argv[2], s, false))
 		{
 			return -1;
 		}
@@ -144,7 +149,7 @@ int main(int argc, char** argv)
 	{
 		if(argc == 8 || argc == 7)
 		{
-			if(!Parse::tokenParser(argv[2], s))
+			if(!Parse::tokenParser(argv[2], s, false))
 			{
 				return -1;
 			}
@@ -164,7 +169,7 @@ int main(int argc, char** argv)
 	{
 		if(argc == 8 || argc == 7)
 		{
-			if(!Parse::tokenParser(argv[2], s))
+			if(!Parse::tokenParser(argv[2], s, false))
 			{
 				return -1;
 			}

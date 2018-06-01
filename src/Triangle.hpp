@@ -2,6 +2,7 @@
 #define TRIANGLE_H
 
 #include "Object.hpp"
+#include "BBH.hpp"
 
 class Triangle : public Object
 {
@@ -17,6 +18,8 @@ class Triangle : public Object
 		void createTriangle(const glm::vec3, const glm::vec3, const glm::vec3);
 		void calcNormal(glm::vec3);
 		void print();
+		glm::vec3 getCenter();
+		BBH* makeBoundingBox();
 };
 
 #endif

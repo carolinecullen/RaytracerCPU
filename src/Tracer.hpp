@@ -4,6 +4,7 @@
 #include "Scene.hpp"
 #include "Ray.hpp"
 #include "Object.hpp"
+#include "BBHTree.hpp"
 
 class Tracer { 
 

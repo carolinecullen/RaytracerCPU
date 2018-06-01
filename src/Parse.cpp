@@ -119,6 +119,7 @@ Camera* Parse::placeCamera(ifstream &FileHandle)
 				return NULL;
 			}
 			cam->lookat = vec3(lookVals[0], lookVals[1], lookVals[2]);
+			return cam;
 		}
 
 		buf = "";	
@@ -358,6 +359,105 @@ Plane* Parse::planeInsertion(ifstream &FileHandle, string line)
 	p->IM = inverse(p->M);
 
 	return p;
+}
+
+Box* Parse::boxInsertion(ifstream &FileHandle, string line)
+{
+	Box* b = new Box();
+	b->type = "Box";
+	vector<float> bVals = Parse::getFloats(line);
+	b->min = vec3(bVals[0], bVals[1], bVals[2]);
+	b->max = vec3(bVals[3], bVals[4], bVals[5]);
+
+	string tok;
+	string buf;
+	while((tok = Parse::tokenizeHelper(FileHandle, buf)) != "}")
+	{
+		vector<float> fNums;
+		if(tok == "pigment")
+		{
+			parse_box_pigment(b, buf);
+		}
+
+		if(tok == "scale")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 s = vec3(fNums[0], fNums[1], fNums[2]);
+			b->M = glm::scale(mat4(1.0f), s) * b->M;
+		}
+
+		if(tok == "rotate")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 rotation = vec3(radians(fNums[0]), radians(fNums[1]), radians(fNums[2]));
+         	b->M = rotate(mat4(1.0f), rotation.z, vec3(0.f, 0.f, 1.f)) * b->M;
+         	b->M = rotate(mat4(1.0f), rotation.y, vec3(0.f, 1.f, 0.f)) * b->M;
+			b->M = rotate(mat4(1.0f), rotation.x, vec3(1.f, 0.f, 0.f)) * b->M;
+		}
+
+		if(tok == "translate")
+		{
+			fNums = Parse::getFloats(buf);
+			vec3 t = vec3(fNums[0], fNums[1], fNums[2]);
+			b->M = translate(mat4(1.0f), t) * b->M;
+		}
+
+		if(tok == "finish")
+		{
+			char cur = buf[buf.size()-1];
+			bool flag = false;
+			if(cur == '}')
+			{
+				
+				char cur2 = buf[buf.size()-2];
+				if(cur2 == '}')
+				{
+					flag = true;
+				}
+				
+			}
+			parse_box_finish(b, buf);
+			if(flag)
+			{
+				return b;
+			}
+		}
+		buf = "";	
+	}
+
+	b->IM = inverse(b->M);
+
+	return b;
+}
+
+void Parse::parse_box_pigment(Box *box, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "rgb")
+		{
+			box->pigment = vec3(nums[0], nums[1], nums[2]);
+			i++;
+		}
+		else if(s == "rgbf")
+		{
+			box->pigment = vec3(nums[0], nums[1], nums[2]);
+			box->filter = nums[3];
+			i++;
+		}
+		else if(s == "rgba")
+		{
+			box->pigment = vec3(nums[0], nums[1], nums[2]);
+			box->filter = nums[3];
+			i++;
+		}
+	}
 }
 
 
@@ -602,12 +702,62 @@ void Parse::parse_plane_finish(Plane *p, string buf)
 	}
 }
 
-bool Parse::tokenParser(string fName, Scene *scene)
+void Parse::parse_box_finish(Box *b, string buf)
+{
+	vector<float> nums;
+	nums = Parse::getFloats(buf);
+
+	vector<string> sVals;
+	istringstream iss(buf);
+
+	int i = 0;
+	for(string s; iss >> s; )
+	{
+		if(s == "{ambient" || s == "ambient")
+		{
+			b->ambient = nums[i];
+			i++;
+		}
+		else if(s == "diffuse")
+		{
+			b->diffuse = nums[i];
+			i++;
+		}
+		else if(s == "specular")
+		{
+			b->specular = nums[i];
+			i++;
+		}
+		else if(s == "ior")
+		{
+			b->ior = nums[i];
+			i++;
+		}
+		else if(s == "reflection")
+		{
+			b->reflection = nums[i];
+			i++;
+		}
+		else if(s == "refraction")
+		{
+			b->refraction = nums[i];
+			i++;
+		}
+		else if(s == "roughness")
+		{
+			b->roughness = nums[i];
+			i++;
+		}
+	}
+}
+
+bool Parse::tokenParser(string fName, Scene *scene, bool bound)
 {
 	ifstream FileHandle("../resources/" + fName);
 	Camera *cam;
 	vector<Lighting *> allLights;
-	vector<Object *> objs;
+	std::vector<Object *> objects;
+	vector<Object *> planes;
 
 	if(!FileHandle)
 	{
@@ -635,7 +785,7 @@ bool Parse::tokenParser(string fName, Scene *scene)
 			else if (token == "sphere")
 			{
 				Sphere *sphere = sphereInsertion(FileHandle, holdBuf);
-				objs.push_back(sphere);
+				objects.push_back(sphere);
 				sphere->id = i;
 				i++;
 			}
@@ -647,14 +797,28 @@ bool Parse::tokenParser(string fName, Scene *scene)
 			else if (token == "plane")
 			{
 				Plane *plane = planeInsertion(FileHandle, holdBuf);
-				objs.push_back(plane);
 				plane->id = i;
+				if(bound)
+				{
+					planes.push_back(plane);
+				}
+				else
+				{
+					objects.push_back(plane);
+				}
+				i++;
+			}
+			else if (token == "box")
+			{
+				Box *box = boxInsertion(FileHandle, holdBuf);
+				objects.push_back(box);
+				box->id = i;
 				i++;
 			}
 			else if (token == "triangle")
 			{
 				Triangle *triangle = triangleInsertion(FileHandle, holdBuf);
-				objs.push_back(triangle);
+				objects.push_back(triangle);
 				triangle->id = i;
 				i++;
 			}
@@ -668,9 +832,21 @@ bool Parse::tokenParser(string fName, Scene *scene)
 		holdBuf = "";
 	}
 
+	if(bound)
+	{
+		scene->sceneObjects = planes;
+		BBHTree *bbhPtr = scene->bht;
+		bbhPtr->makeSDS(objects, bbhPtr->rootBox, 0);
+
+	}
+	else
+	{
+		scene->sceneObjects = objects;
+	}
+
 	scene->cam = cam;
 	scene->lights = allLights;
-	scene->sceneObjects = objs;
+	
 
 	return true;
 }

@@ -7,6 +7,8 @@
 #include "Sphere.hpp"
 #include "Triangle.hpp"
 #include "Diagnostic.hpp"
+#include "Box.hpp"
+
 
 using namespace std; 
 using namespace glm;
@@ -136,6 +138,24 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 		delete checkObjRay;
 	}
 
+	if(flag == 3)
+	{
+		Object* object = scene->bht->treeDecend(scene->bht->rootBox, *incRay);
+    	if (object != NULL) 
+    	{
+      		vec3 objl = vec3(object->IM * vec4(incRay->location, 1.0f));
+			vec3 objd = vec3(object->IM * vec4(incRay->direction, 0.0f));
+			checkObjRay = new ray(objl, objd);
+
+			hldVal = object->intersect(*checkObjRay);
+			retVal = hldVal;
+			obj = object;
+			objRay = new ray(objl, objd);
+
+			delete checkObjRay;
+		}
+	}
+
 
 	if(obj == NULL)
 	{
@@ -196,12 +216,20 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 				vec3 wNormVec = normalize(vec3(transpose(sPtr->IM) * vec4(normVec, 0.0f)));
 				normVec = wNormVec;
 			}
-			else
+			else if (obj->type == "Triangle")
 			{
 				Triangle * tPtr = (Triangle *) obj;
 				tPtr->calcNormal(objPt);
 				normVec = tPtr->normal;
 				vec3 wNormVec = normalize(vec3(transpose(tPtr->IM) * vec4(normVec, 0.0f)));
+				normVec = wNormVec;
+			}
+			else if (obj->type == "Box")
+			{
+				Box * bPtr = (Box *) obj;
+				bPtr->calcNormal(objPt);
+				normVec = bPtr->normal;
+				vec3 wNormVec = normalize(vec3(transpose(bPtr->IM) * vec4(normVec, 0.0f)));
 				normVec = wNormVec;
 			}
 
@@ -314,7 +342,7 @@ ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectP
 	return (new ray((intersectPt + (refractVec * 0.001f)), refractVec));
 }
 
-// FLAG :: 1 - fresnel, 2 - beers
+// FLAG :: 1 - fresnel, 2 - beers, 3 - bounding box
 void Tracer::traceRays(int flag)
 {
 
@@ -330,7 +358,6 @@ void Tracer::traceRays(int flag)
 			float pixelX = (float)((-0.5) + ((i + 0.5)/width));
 			float pixelY = (float)((-0.5) + ((j + 0.5)/height));
 
-			
 			vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 			vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 			ray *r = new ray(scene->cam->location, dir);
