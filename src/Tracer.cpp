@@ -192,7 +192,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 		if(val != -1)
 		{
 			// if (val < length((l->location) - lRay->direction))
-			if (val < length((l->location) - lRay->direction))
+			if (val < length((l->location) - lRay->location))
 			{
 				inShadow = true;
 			}

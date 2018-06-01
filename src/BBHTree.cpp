@@ -29,8 +29,8 @@ void BBHTree::makeSDS(vector<Object *> objs, BNode *cur, int axis)
     cur->boundBox.AddBox(&cur->boundBox);
 }
 
-
-void BBHTree::sortObjects(vector<Object *> objs, int axis) 
+// pass refernce and use standard sort 
+void BBHTree::sortObjects(vector<Object *> &objs, int axis) 
 {
     cout << objs.size() << endl;
    for (int i = 1; i < objs.size(); i++) 

@@ -837,7 +837,6 @@ bool Parse::tokenParser(string fName, Scene *scene, bool bound)
 		scene->sceneObjects = planes;
 		BBHTree *bbhPtr = scene->bht;
 		bbhPtr->makeSDS(objects, bbhPtr->rootBox, 0);
-
 	}
 	else
 	{

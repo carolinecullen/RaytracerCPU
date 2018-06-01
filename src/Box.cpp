@@ -36,9 +36,9 @@ void Box::updateBox(vec3 min, vec3 max)
 
 vec3 Box::getCenter() 
 {
-    cout << "min " << min.x << endl;
-    cout << "max " << max.x << endl;
-    cout << (max.x+min.x)/2 << endl;
+    // cout << "min " << min.x << endl;
+    // cout << "max " << max.x << endl;
+    // cout << (max.x+min.x)/2 << endl;
     // cout << vec3((float)((max.x+min.x)/2.f), (float)((max.y+min.y)/2.f), (float)((max.z+min.z)/2.f)).x << endl;
 
     return vec3((float)((max.x+min.x)/2.f), (float)((max.y+min.y)/2.f), (float)((max.z+min.z)/2.f));
