@@ -1,6 +1,8 @@
 #include "BBHTree.hpp"
+#include <algorithm>
 using namespace std;
 using namespace glm;
+
 
 BBHTree::BBHTree() 
 {
@@ -32,33 +34,29 @@ void BBHTree::makeSDS(vector<Object *> objs, BNode *cur, int axis)
 // pass refernce and use standard sort 
 void BBHTree::sortObjects(vector<Object *> &objs, int axis) 
 {
-    cout << objs.size() << endl;
-   for (int i = 1; i < objs.size(); i++) 
+   if (axis == 0)
    {
-        float key = objs[i]->getCenter()[axis];
-        // cout << objs[i]->type << endl;
-        // if(objs[i]->type == "Box")
-        // {
-        //     Box* b = (Box*)objs[i];
-        //     cout << b->min.x << endl;
-        // }
-        // cout << "center: " << objs[i]->getCenter()[0] << objs[i]->getCenter()[1] << objs[i]->getCenter()[2] << endl; 
-        int j = i-1;
+    std::sort(objs.begin(), objs.end(), [](Object* a, Object* b) -> bool
+        { 
+            return a->getCenter()[0] > b->getCenter()[0]; 
+        });
+   }
+   else if (axis == 1)
+   {
+    std::sort(objs.begin(), objs.end(), [](Object* a, Object* b) -> bool
+        { 
+            return a->getCenter()[1] > b->getCenter()[1]; 
+        });
+   }
+   else if (axis == 2)
+   {
+    std::sort(objs.begin(), objs.end(), [](Object* a, Object* b) -> bool
+        { 
+            return a->getCenter()[2] > b->getCenter()[2]; 
+        });
+   }
+    
 
-        while(j>=0 && (objs[i]->getCenter()[axis] > key))
-        {
-            objs[j+1] = objs[j];
-            j = j-1;
-        }
-
-        objs[j+1] = objs[key];
-    }
-
-
-    // for (int i = 0; i < objs.size(); i++)
-    // {
-    //     cout << "obj center on axis " << axis << " " << objs[i]->getCenter()[axis] << endl;
-    // }
 }
 
 Object* BBHTree::treeDecend(BNode *node, const ray &ray) 
