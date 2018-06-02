@@ -93,10 +93,9 @@ vec3 Triangle::getCenter()
 BBH* Triangle::makeBoundingBox() 
 {
    BBH* box = new BBH;
-   box->AddPoint(A);
+   box->Reset(A);
    box->AddPoint(B);
    box->AddPoint(C);
-   
 
    if (box->init()) 
     {

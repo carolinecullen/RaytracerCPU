@@ -22,17 +22,24 @@ void BBHTree::makeSDS(vector<Object *> objs, BNode *cur, int axis)
     sortObjects(objs, axis);
 
     cur->objs = objs;
-    cur->left = new BNode;
-    cur->right = new BNode;
+    // cur->left = new BNode;
+    // cur->right = new BNode;
 
-    vector<Object *> left_half(objs.begin(), (objs.begin()+objs.size()/2));
-    makeSDS(left_half, cur->left, (axis+1) % 3);
+    // vector<Object *> left_half(objs.begin(), (objs.begin()+objs.size()/2));
+    // makeSDS(left_half, cur->left, (axis+1) % 3);
 
-    vector<Object *> right_half((objs.begin()+objs.size()/2), objs.end());
-    makeSDS(right_half, cur->right, (axis+1) % 3);
+    // vector<Object *> right_half((objs.begin()+objs.size()/2), objs.end());
+    // makeSDS(right_half, cur->right, (axis+1) % 3);
 
-    BBH* bbox = objs[0]->makeBoundingBox();
-    cur->boundBox.AddBox(*bbox);
+
+    // if (cur->left != NULL) 
+    // {
+    //     cur->boundBox.AddBox(cur->left->boundBox);
+    // }
+    // if (cur->right != NULL) 
+    // {
+    //     cur->boundBox.AddBox(cur->right->boundBox);
+    // }  
 }
  
 void BBHTree::sortObjects(vector<Object *> &objs, int axis) 

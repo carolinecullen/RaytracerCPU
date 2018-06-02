@@ -25,14 +25,14 @@ plane {<1, 0, 0>, -8
 }
 
 // back wall
-plane {<0, 0, -1>, 30
+plane {<0, 0, 1>, -30
   pigment {color rgb <0.8, 0.4, 0.2>}
   finish {ambient 0.4 diffuse 0.2 reflection 0.2}
   rotate <0, 30, 0>
 }
 
 // back wall on the right
-plane {<0, 0, -1>, 30
+plane {<0, 0, 1>, -30
   pigment {color rgb <0.0, 0.2, 0.2>}
   finish {ambient 0.4 diffuse 0.8 reflection 0.2}
   rotate <0, -20, 0>

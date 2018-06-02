@@ -76,14 +76,10 @@ vec3 Sphere::getCenter()
 
 BBH* Sphere::makeBoundingBox() 
 {
-	vec3 min = this->center;
-	vec3 max = this->center;
-	for (int i = 0; i < 3; i++) 
-	{
-		min[i] -= radius;
-		max[i] += radius;
-	}
-	BBH* box = new BBH(min, max);
+	BBH* box = new BBH();
+
+	box->Reset(this->center - this->radius);
+	box->AddPoint(this->center + this->radius);
 
 	if (box->init()) 
     {
