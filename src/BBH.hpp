@@ -12,7 +12,7 @@ class BBH : public Box
 
 		void Reset(glm::vec3);
 		void AddPoint(glm::vec3);
-		void AddBox(BBH *);
+		void AddBox(BBH &);
 		glm::vec3 getCenter(){ return glm::vec3(0.f); };
 };
 

@@ -33,20 +33,20 @@ void BBH::Reset(vec3 point)
     this->min = this->max = point;
 }
 
-void BBH::AddBox(BBH *box) 
+void BBH::AddBox(BBH &box) 
 {
 
    if (!this->init()) {
-      updateBox(box->min, box->max);
+      updateBox(box.min, box.max);
       return;
    }
    
-   this->min.x = std::min(this->min.x, box->min.x);
-   this->min.y = std::min(this->min.y, box->min.y);
-   this->min.z = std::min(this->min.z, box->min.z);
-   this->max.x = std::max(this->max.x, box->max.x);
-   this->max.y = std::max(this->max.y, box->max.y);
-   this->max.z = std::max(this->max.z, box->max.z);
+   this->min.x = std::min(this->min.x, box.min.x);
+   this->min.y = std::min(this->min.y, box.min.y);
+   this->min.z = std::min(this->min.z, box.min.z);
+   this->max.x = std::max(this->max.x, box.max.x);
+   this->max.y = std::max(this->max.y, box.max.y);
+   this->max.z = std::max(this->max.z, box.max.z);
 
    updateBox(this->min, this->max);
 }

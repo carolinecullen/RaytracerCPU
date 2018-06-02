@@ -148,9 +148,19 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 			checkObjRay = new ray(objl, objd);
 
 			hldVal = object->intersect(*checkObjRay);
-			retVal = hldVal;
-			obj = object;
-			objRay = new ray(objl, objd);
+			if(hldVal > 0)
+			{
+				if(hldVal < retVal)
+				{
+					if(objRay != NULL)
+					{
+						delete objRay;
+					}
+					retVal = hldVal;
+					obj = object;
+					objRay = new ray(objl, objd);
+				}
+			}
 
 			delete checkObjRay;
 		}

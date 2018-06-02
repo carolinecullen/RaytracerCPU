@@ -14,24 +14,26 @@ void BBHTree::makeSDS(vector<Object *> objs, BNode *cur, int axis)
     if (objs.size() <= 1) 
     {
         cur->objs = objs;
-        cur->boundBox.AddBox(&cur->boundBox);
+        BBH* bbox = objs[0]->makeBoundingBox();
+        cur->boundBox.AddBox(*bbox);
         return;
     }
 
     sortObjects(objs, axis);
 
-    cur->left = new BNode;
-    vector<Object *> left_half(objs.begin(), (objs.begin()+objs.size()/2));
-    makeSDS(left_half, cur->left, (axis+1) % 3);
 
-    cur->right = new BNode;
-    vector<Object *> right_half((objs.begin()+objs.size()/2), objs.end());
-    makeSDS(right_half, cur->right, (axis+1) % 3);
 
-    cur->boundBox.AddBox(&cur->boundBox);
+    // cur->left = new BNode;
+    // vector<Object *> left_half(objs.begin(), (objs.begin()+objs.size()/2));
+    // makeSDS(left_half, cur->left, (axis+1) % 3);
+
+    // cur->right = new BNode;
+    // vector<Object *> right_half((objs.begin()+objs.size()/2), objs.end());
+    // makeSDS(right_half, cur->right, (axis+1) % 3);
+
+    // cur->boundBox.AddBox(cur->boundBox);
 }
-
-// pass refernce and use standard sort 
+ 
 void BBHTree::sortObjects(vector<Object *> &objs, int axis) 
 {
    if (axis == 0)
