@@ -19,29 +19,7 @@ class BBHTree
       BNode* left = NULL;
    };
 
-   struct less_than_0
-   {
-       inline bool operator() ( Object& struct1,  Object& struct2)
-       {
-           return (struct1.getCenter()[0] < struct2.getCenter()[0]);
-       }
-   };
-
-   struct less_than_1
-   {
-       inline bool operator() ( Object& struct1,  Object& struct2)
-       {
-           return (struct1.getCenter()[1] < struct2.getCenter()[1]);
-       }
-   };
-
-   struct less_than_2
-   {
-       inline bool operator() ( Object& struct1,  Object& struct2)
-       {
-           return (struct1.getCenter()[2] < struct2.getCenter()[2]);
-       }
-   };
+   
 
    BBHTree();
 
@@ -50,7 +28,7 @@ class BBHTree
 
    void makeSDS(std::vector<Object *>, BNode*, int);  
    void sortObjects(std::vector<Object *> &, int);
-	Object* treeDecend(BNode *, const ray &); 
+	std::vector<Object *> treeDecend(BNode *, const ray &); 
 
 };
 

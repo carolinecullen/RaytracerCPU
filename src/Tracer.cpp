@@ -140,29 +140,32 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 	if(flag == 3)
 	{
-		Object* object = scene->bht->treeDecend(scene->bht->rootBox, *incRay);
-    	if (object != NULL) 
+		vector<Object*> objects = scene->bht->treeDecend(scene->bht->rootBox, *incRay);
+    	if (objects.size() != 0) 
     	{
-      		vec3 objl = vec3(object->IM * vec4(incRay->location, 1.0f));
-			vec3 objd = vec3(object->IM * vec4(incRay->direction, 0.0f));
-			checkObjRay = new ray(objl, objd);
+    		for(auto so: objects)
+			{	
+	      		vec3 objl = vec3(so->IM * vec4(incRay->location, 1.0f));
+				vec3 objd = vec3(so->IM * vec4(incRay->direction, 0.0f));
+				checkObjRay = new ray(objl, objd);
 
-			hldVal = object->intersect(*checkObjRay);
-			if(hldVal > 0)
-			{
-				if(hldVal < retVal)
+				hldVal = so->intersect(*checkObjRay);
+				if(hldVal > 0)
 				{
-					if(objRay != NULL)
+					if(hldVal < retVal)
 					{
-						delete objRay;
+						if(objRay != NULL)
+						{
+							delete objRay;
+						}
+						retVal = hldVal;
+						obj = so;
+						objRay = new ray(objl, objd);
 					}
-					retVal = hldVal;
-					obj = object;
-					objRay = new ray(objl, objd);
 				}
-			}
 
-			delete checkObjRay;
+				delete checkObjRay;
+			}
 		}
 	}
 
