@@ -28,6 +28,7 @@ class BBHTree
 
    void makeSDS(std::vector<Object *>, BNode*, int);  
    void sortObjects(std::vector<Object *> &, int);
+   BBH makeBoundBox(std::vector<Object *>, int);
 	std::vector<Object *> treeDecend(BNode *, const ray &); 
 
 };
