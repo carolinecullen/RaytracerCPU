@@ -50,29 +50,29 @@ BBH BBHTree::makeBoundBox(vector<Object *> objs, int axis)
             newBox.Reset(sptr->center - sptr->radius);
             newBox.AddPoint(sptr->center + sptr->radius);
 
-            // if (newBox->init()) 
-            // {
-            //     std::vector<vec3> corners;
-            //     corners.push_back(vec3(newBox->min.x, newBox->min.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->min.x, newBox->min.y, newBox->max.z));
-            //     corners.push_back(vec3(newBox->min.x, newBox->max.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->min.x, newBox->max.y, newBox->max.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->min.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->min.y, newBox->max.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->max.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->max.y, newBox->max.z));
+            if (newBox.init()) 
+            {
+                std::vector<vec3> corners;
+                corners.push_back(vec3(newBox.min.x, newBox.min.y, newBox.min.z));
+                corners.push_back(vec3(newBox.min.x, newBox.min.y, newBox.max.z));
+                corners.push_back(vec3(newBox.min.x, newBox.max.y, newBox.min.z));
+                corners.push_back(vec3(newBox.min.x, newBox.max.y, newBox.max.z));
+                corners.push_back(vec3(newBox.max.x, newBox.min.y, newBox.min.z));
+                corners.push_back(vec3(newBox.max.x, newBox.min.y, newBox.max.z));
+                corners.push_back(vec3(newBox.max.x, newBox.max.y, newBox.min.z));
+                corners.push_back(vec3(newBox.max.x, newBox.max.y, newBox.max.z));
 
-            //     newBox->min = vec3(-numeric_limits<float>::max());
-            //     newBox->max = vec3( numeric_limits<float>::max());
+                newBox.min = vec3(-numeric_limits<float>::max());
+                newBox.max = vec3( numeric_limits<float>::max());
 
-            //     for (int i = 0; i < 8; i++) 
-            //     {
-            //         corners[i] = vec3(this->M * vec4(corners[i], 1.f));
-            //         newBox->AddPoint(corners[i]);
-            //     }
+                for (int i = 0; i < 8; i++) 
+                {
+                    corners[i] = vec3(sptr->M * vec4(corners[i], 1.f));
+                    newBox.AddPoint(corners[i]);
+                }
 
-            //     newBox->updateBox(newBox->min, newBox->max);
-            // }
+                newBox.updateBox(newBox.min, newBox.max);
+            }
             allBox.AddBox(newBox);
         }
         else if(objs[i]->type == "Triangle")
@@ -82,29 +82,29 @@ BBH BBHTree::makeBoundBox(vector<Object *> objs, int axis)
             newBox.AddPoint(tptr->B);
             newBox.AddPoint(tptr->C);
 
-            // if (newBox->init()) 
-            // {
-            //     std::vector<vec3> corners;
-            //     corners.push_back(vec3(newBox->min.x, newBox->min.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->min.x, newBox->min.y, newBox->max.z));
-            //     corners.push_back(vec3(newBox->min.x, newBox->max.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->min.x, newBox->max.y, newBox->max.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->min.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->min.y, newBox->max.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->max.y, newBox->min.z));
-            //     corners.push_back(vec3(newBox->max.x, newBox->max.y, newBox->max.z));
+            if (newBox.init()) 
+            {
+                std::vector<vec3> corners;
+                corners.push_back(vec3(newBox.min.x, newBox.min.y, newBox.min.z));
+                corners.push_back(vec3(newBox.min.x, newBox.min.y, newBox.max.z));
+                corners.push_back(vec3(newBox.min.x, newBox.max.y, newBox.min.z));
+                corners.push_back(vec3(newBox.min.x, newBox.max.y, newBox.max.z));
+                corners.push_back(vec3(newBox.max.x, newBox.min.y, newBox.min.z));
+                corners.push_back(vec3(newBox.max.x, newBox.min.y, newBox.max.z));
+                corners.push_back(vec3(newBox.max.x, newBox.max.y, newBox.min.z));
+                corners.push_back(vec3(newBox.max.x, newBox.max.y, newBox.max.z));
 
-            //     newBox->min = vec3(-numeric_limits<float>::max());
-            //     newBox->max = vec3( numeric_limits<float>::max());
+                newBox.min = vec3(-numeric_limits<float>::max());
+                newBox.max = vec3( numeric_limits<float>::max());
 
-            //     for (int i = 0; i < 8; i++) 
-            //     {
-            //         corners[i] = vec3(this->M * vec4(corners[i], 1.f));
-            //         newBox->AddPoint(corners[i]);
-            //     }
+                for (int i = 0; i < 8; i++) 
+                {
+                    corners[i] = vec3(tptr->M * vec4(corners[i], 1.f));
+                    newBox.AddPoint(corners[i]);
+                }
 
-            //     newBox->updateBox(newBox->min, newBox->max);
-            // }
+                newBox.updateBox(newBox.min, newBox.max);
+            }
             allBox.AddBox(newBox);
         }
         else
@@ -112,6 +112,30 @@ BBH BBHTree::makeBoundBox(vector<Object *> objs, int axis)
             Box* bptr = (Box *)objs[i];
             newBox.AddPoint(bptr->min);
             newBox.AddPoint(bptr->max);
+
+            if (newBox.init()) 
+            {
+                std::vector<vec3> corners;
+                corners.push_back(vec3(newBox.min.x, newBox.min.y, newBox.min.z));
+                corners.push_back(vec3(newBox.min.x, newBox.min.y, newBox.max.z));
+                corners.push_back(vec3(newBox.min.x, newBox.max.y, newBox.min.z));
+                corners.push_back(vec3(newBox.min.x, newBox.max.y, newBox.max.z));
+                corners.push_back(vec3(newBox.max.x, newBox.min.y, newBox.min.z));
+                corners.push_back(vec3(newBox.max.x, newBox.min.y, newBox.max.z));
+                corners.push_back(vec3(newBox.max.x, newBox.max.y, newBox.min.z));
+                corners.push_back(vec3(newBox.max.x, newBox.max.y, newBox.max.z));
+
+                newBox.min = vec3(-numeric_limits<float>::max());
+                newBox.max = vec3( numeric_limits<float>::max());
+
+                for (int i = 0; i < 8; i++) 
+                {
+                    corners[i] = vec3(bptr->M * vec4(corners[i], 1.f));
+                    newBox.AddPoint(corners[i]);
+                }
+
+                newBox.updateBox(newBox.min, newBox.max);
+            }
             allBox.AddBox(newBox);
         }
     }
