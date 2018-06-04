@@ -156,21 +156,55 @@ vector<Object *> BBHTree::treeDecend(BNode *node, const ray &ray)
     {
 		if (node->left != NULL) 
         {
-			return treeDecend(node->left, ray);
+            if (node->left->boundBox.intersect(ray) != 0) 
+            {
+			    vector<Object*> lReturn = treeDecend(node->left, ray);
+                if (node->right != NULL) 
+                {
+                    if (node->right->boundBox.intersect(ray) != 0) 
+                    {
+                        vector<Object*> rReturn = treeDecend(node->right, ray);
+                        rReturn.insert( rReturn.end(), lReturn.begin(), lReturn.end() );
+                        return rReturn;
+                    }
+                    else
+                    {
+                        return lReturn;
+                    }
+                }
+                else
+                {
+                    return lReturn;
+                }
+            }
+            else if (node->right != NULL) 
+            {
+                if (node->right->boundBox.intersect(ray) != 0) 
+                {
+                     return treeDecend(node->right, ray);
+                }
+                else
+                {
+                    return node->objs;
+                }
+            }
+            else
+            {
+                return node->objs;
+            }
 		}
-        else
+        if (node->right != NULL) 
         {
-            return node->objs;
-        }
-		if (node->right != NULL) 
-        {
-			return treeDecend(node->right, ray);
-		}
-        else
-        {
-            return node->objs;
+            if (node->right->boundBox.intersect(ray) != 0) 
+            {
+                 return treeDecend(node->right, ray);
+            }
         }
 	}
+    else
+    {
+        return node->objs;
+    }
 
     vector<Object *> nothing;
 	return nothing;
