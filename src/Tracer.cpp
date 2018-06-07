@@ -384,8 +384,8 @@ ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal)
 	mat4 matrix = mat4(1.f);
 
  	matrix = rotate(mat4(1.0f), angle, axis) * matrix;
- 	vec3 transformed = matrix*vec4(pt, 0.f);
- 	return new ray(pt, transformed);
+ 	vec4 transformed = matrix*vec4(pt, 0.f);
+ 	return new ray(pt, vec3(transformed.x, transformed.y, transformed.z));
 }
 
 vector<vec3> Tracer::generate_hemisphere_smpl_pts(int numPts)
