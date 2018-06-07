@@ -65,14 +65,18 @@ int main(int argc, char** argv)
 						
 					}
 
-					if(flag.find("ss") != -1)
+					string flagGIcheck = flag.substr(0, 3);
+					if(flagGIcheck.compare("ss=") == 0)
 					{
-						int sspos = flag.find("=");
-						int ssint = 0;
-						ssint = flag.at(sspos+1)-'0';
+						if(!Parse::tokenParser(argv[2], s, false))
+						{
+							return -1;
+						}
+						int ssInt = stoi(flag.substr(3));
 						Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-						tracer->traceRaysSuper(ssint);
+						tracer->traceRaysSuper(ssInt);
 						return 0;
+
 					}
 				}
 				else
