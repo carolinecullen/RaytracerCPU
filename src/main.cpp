@@ -24,12 +24,13 @@ int main(int argc, char** argv)
    	
 	Scene *s = new Scene();
 	int flagParam = 0;
+	int gi_samples = 0;
 	bool Bounding = false;
 	if(strcmp(argv[1], "render") == 0)
 	{
-		if(argc == 6 || argc == 5)
+		if(argc == 6 || argc == 5 || argc == 7)
 		{
-			if(argc == 6)
+			if(argc == 6 || argc==7)
 			{
 				string flag(argv[5]);
 				if(argv[5][0] == '-')
@@ -44,6 +45,24 @@ int main(int argc, char** argv)
 					{
 						Bounding = true;
 						flagParam = 3;
+					}
+					else if(flag.compare("gi") == 0)
+					{
+						flagParam = 4;
+						if(argc == 7)
+						{
+							string flagGI(argv[6]);
+							flagGI = flagGI.substr(1);
+							if(argv[6][0] == '-')
+							{
+								string flagGIcheck = flagGI.substr(0, 11);
+								if(flagGIcheck.compare("gi_samples=") == 0)
+								{
+									gi_samples = stoi(flagGI.substr(11));
+								}
+							}
+						}
+						
 					}
 
 					if(flag.find("ss") != -1)
@@ -69,7 +88,7 @@ int main(int argc, char** argv)
 			}
 
 			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-			tracer->traceRays(flagParam);
+			tracer->traceRays(flagParam, gi_samples);
 		}
 		else
 		{
