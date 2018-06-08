@@ -24,7 +24,7 @@ int main(int argc, char** argv)
    	
 	Scene *s = new Scene();
 	int flagParam = 0;
-	int gi_samples = 32;
+	int gi_samples = 64;
 	bool Bounding = false;
 	if(strcmp(argv[1], "render") == 0)
 	{

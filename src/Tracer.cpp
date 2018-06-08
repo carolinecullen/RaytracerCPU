@@ -324,6 +324,11 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 	if (flag == 4)
 	{
 		ambient = vec3(0.f);
+
+		if(bounces == 1)
+		{
+			samples = 16;
+		}
 		vector<vec3> samplePts = generate_hemisphere_smpl_pts(samples);
 
 		for(auto pt: samplePts)
