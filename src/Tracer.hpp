@@ -27,7 +27,7 @@ class Tracer {
 		float checkForIntersection(ray *, Object *, int);
 		float computeDiffuse(glm::vec3, Object*, glm::vec3, glm::vec3);
 		float computeSpecular(glm::vec3, Object*, glm::vec3, glm::vec3);
-		ray* alignSampleVector(glm::vec3, glm::vec3, glm::vec3);
+		ray* alignSampleVector(glm::vec3, glm::vec3, glm::vec3, glm::vec3);
 		glm::vec3 generateWeightedPoint(float, float);
 		std::vector<glm::vec3> generate_hemisphere_smpl_pts(int);
 

@@ -328,7 +328,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 		for(auto pt: samplePts)
 		{
-			ray *ambRec = alignSampleVector(pt, scene->cam->up, normVec);
+			ray *ambRec = alignSampleVector(pt, scene->cam->up, normVec, intersectPt);
 			ambient += (getColor(ambRec, recCount-1, print, flag, t_val, bounces-1, samples) * dot(pt, normVec));
 			delete ambRec;
 		}
@@ -376,7 +376,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 }
 
-ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal)
+ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal, vec3 intersectPt)
 {
 	float angle = acos(dot(up, normal));
 	vec3 axis = cross(up,normal);
@@ -385,7 +385,7 @@ ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal)
 
  	matrix = rotate(mat4(1.0f), angle, axis) * matrix;
  	vec4 transformed = matrix*vec4(pt, 0.f);
- 	return new ray(pt, vec3(transformed.x, transformed.y, transformed.z));
+ 	return new ray(intersectPt, vec3(transformed.x, transformed.y, transformed.z));
 }
 
 vector<vec3> Tracer::generate_hemisphere_smpl_pts(int numPts)
