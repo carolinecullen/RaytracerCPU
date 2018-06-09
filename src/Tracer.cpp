@@ -340,7 +340,7 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 		if(samplePts.size() > 0)
 		{
-			ambient *= (float)(1/samplePts.size());
+			ambient = (ambient/(float)samplePts.size());
 		}
 		
 	}
