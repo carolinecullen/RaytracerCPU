@@ -324,21 +324,25 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 	if (flag == 4)
 	{
 		ambient = vec3(0.f);
-
-		if(bounces == 1)
+		if(bounces == 1 && samples>16)
 		{
 			samples = 16;
 		}
+
 		vector<vec3> samplePts = generate_hemisphere_smpl_pts(samples);
 
 		for(auto pt: samplePts)
 		{
 			ray *ambRec = alignSampleVector(pt, scene->cam->up, normVec, intersectPt);
-			ambient += (getColor(ambRec, recCount-1, print, flag, t_val, bounces-1, samples) * dot(pt, normVec));
+			ambient += (getColor(ambRec, recCount, print, flag, t_val, bounces-1, samples));
 			delete ambRec;
 		}
 
-		ambient *= (float)(2/samplePts.size());
+		if(samplePts.size() > 0)
+		{
+			ambient *= (float)(1/samplePts.size());
+		}
+		
 	}
 
 	vec3 localcolor = (ambient + diffuse + specular);
@@ -383,14 +387,31 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal, vec3 intersectPt)
 {
+	up = vec3(0.f,0.f,1.f);
 	float angle = acos(dot(up, normal));
 	vec3 axis = cross(up,normal);
+
+	if(axis == up)
+	{
+		 return new ray((intersectPt + normal * 0.001f), pt);
+
+	}
+	if(axis == normal)
+	{
+		 return new ray((intersectPt + normal * 0.001f), pt);
+
+	}
+	if(axis == -normal)
+	{
+		 return new ray((intersectPt + normal * 0.001f), -pt);
+
+	}
 
 	mat4 matrix = mat4(1.f);
 
  	matrix = rotate(mat4(1.0f), angle, axis) * matrix;
- 	vec4 transformed = matrix*vec4(pt, 0.f);
- 	return new ray(intersectPt, vec3(transformed.x, transformed.y, transformed.z));
+ 	vec4 transformed = normalize(matrix*vec4(pt, 0.f));
+ 	return new ray((intersectPt + normal * 0.001f), vec3(transformed.x, transformed.y, transformed.z));
 }
 
 vector<vec3> Tracer::generate_hemisphere_smpl_pts(int numPts)
