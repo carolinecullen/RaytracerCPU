@@ -10,6 +10,7 @@
 #include "Box.hpp"
 #include "glm/gtc/matrix_transform.hpp"	
 
+
 using namespace std; 
 using namespace glm;
 
@@ -281,7 +282,6 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 		if(!inShadow)
 		{
-			
 
 			if((obj->reflection > 0) || ((obj->filter > 0) && (flag == 1)))
 			{
@@ -387,23 +387,34 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 
 }
 
+bool Tracer::equalEpsilonVec(vec3 const a, vec3 const b, float const epsilon)
+{
+	for(int i = 0; i < 3; i++)
+	{
+		if(abs(a[i] - b[i]) < epsilon)
+		{
+			continue;
+		}
+		else
+		{
+			return false;
+		}
+	}
+    return true;
+}
+
+
 ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal, vec3 intersectPt)
 {
-	up = vec3(0.f,0.f,1.f);
+	up = vec3(0.f, 0.f, 1.f);
 	float angle = acos(dot(up, normal));
-	vec3 axis = cross(up,normal);
+	vec3 axis = cross(up, normal);
 
-	if(axis == up)
+	if(equalEpsilonVec(normal, up, 0.001f))
 	{
 		 return new ray((intersectPt + normal * 0.001f), pt);
-
 	}
-	if(axis == up)
-	{
-		 return new ray((intersectPt + normal * 0.001f), pt);
-
-	}
-	if(axis == -up)
+	if(equalEpsilonVec(normal, -up, 0.001f))
 	{
 		 return new ray((intersectPt + normal * 0.001f), -pt);
 

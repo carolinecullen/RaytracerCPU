@@ -22,6 +22,7 @@ class Tracer {
 		void printrays(int, int);
 		glm::vec3 getColor(ray*, int, bool, int, float&, int, int);
 		void traceRaysSuper(int);
+		bool equalEpsilonVec(glm::vec3 const, glm::vec3 const, float const);
 		float calcFresnel(float, glm::vec3, glm::vec3);
 		ray* calcRefractionRay(glm::vec3, glm::vec3&, glm::vec3, Object*, bool, bool&);
 		float checkForIntersection(ray *, Object *, int);
