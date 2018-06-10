@@ -247,39 +247,41 @@ vec3 Tracer::getColor(ray* incRay, int recCount, bool print, int flag, float& t_
 		}
 		delete lRay;
 
+		if(obj->type == "Plane")
+		{
+			Plane * pPtr = (Plane *) obj;
+			normVec = pPtr->normal;
+			vec3 wNormVec = normalize(vec3(transpose(pPtr->IM) * vec4(normVec, 0.0f)));
+			normVec = wNormVec;
+		}
+		else if (obj->type == "Sphere")
+		{
+			Sphere * sPtr = (Sphere *) obj;
+			sPtr->calcNormal(objPt);
+			normVec = sPtr->normal;
+			vec3 wNormVec = normalize(vec3(transpose(sPtr->IM) * vec4(normVec, 0.0f)));
+			normVec = wNormVec;
+		}
+		else if (obj->type == "Triangle")
+		{
+			Triangle * tPtr = (Triangle *) obj;
+			tPtr->calcNormal(objPt);
+			normVec = tPtr->normal;
+			vec3 wNormVec = normalize(vec3(transpose(tPtr->IM) * vec4(normVec, 0.0f)));
+			normVec = wNormVec;
+		}
+		else if (obj->type == "Box")
+		{
+			Box * bPtr = (Box *) obj;
+			bPtr->calcNormal(objPt);
+			normVec = bPtr->normal;
+			vec3 wNormVec = normalize(vec3(transpose(bPtr->IM) * vec4(normVec, 0.0f)));
+			normVec = wNormVec;
+		}
+
 		if(!inShadow)
 		{
-			if(obj->type == "Plane")
-			{
-				Plane * pPtr = (Plane *) obj;
-				normVec = pPtr->normal;
-				vec3 wNormVec = normalize(vec3(transpose(pPtr->IM) * vec4(normVec, 0.0f)));
-				normVec = wNormVec;
-			}
-			else if (obj->type == "Sphere")
-			{
-				Sphere * sPtr = (Sphere *) obj;
-				sPtr->calcNormal(objPt);
-				normVec = sPtr->normal;
-				vec3 wNormVec = normalize(vec3(transpose(sPtr->IM) * vec4(normVec, 0.0f)));
-				normVec = wNormVec;
-			}
-			else if (obj->type == "Triangle")
-			{
-				Triangle * tPtr = (Triangle *) obj;
-				tPtr->calcNormal(objPt);
-				normVec = tPtr->normal;
-				vec3 wNormVec = normalize(vec3(transpose(tPtr->IM) * vec4(normVec, 0.0f)));
-				normVec = wNormVec;
-			}
-			else if (obj->type == "Box")
-			{
-				Box * bPtr = (Box *) obj;
-				bPtr->calcNormal(objPt);
-				normVec = bPtr->normal;
-				vec3 wNormVec = normalize(vec3(transpose(bPtr->IM) * vec4(normVec, 0.0f)));
-				normVec = wNormVec;
-			}
+			
 
 			if((obj->reflection > 0) || ((obj->filter > 0) && (flag == 1)))
 			{
@@ -396,12 +398,12 @@ ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal, vec3 intersectPt)
 		 return new ray((intersectPt + normal * 0.001f), pt);
 
 	}
-	if(axis == normal)
+	if(axis == up)
 	{
 		 return new ray((intersectPt + normal * 0.001f), pt);
 
 	}
-	if(axis == -normal)
+	if(axis == -up)
 	{
 		 return new ray((intersectPt + normal * 0.001f), -pt);
 
