@@ -20,7 +20,7 @@ Box::Box()
 
     float highestFloat = numeric_limits<float>::max();
     this->min = vec3(highestFloat);
-    this->max = vec3(highestFloat); 
+    this->max = -vec3(highestFloat); 
 }
 
 BBH* Box::makeBoundingBox()

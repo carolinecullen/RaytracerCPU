@@ -410,11 +410,11 @@ ray* Tracer::alignSampleVector(vec3 pt, vec3 up, vec3 normal, vec3 intersectPt)
 	float angle = acos(dot(up, normal));
 	vec3 axis = cross(up, normal);
 
-	if(equalEpsilonVec(normal, up, 0.001f))
+	if(normal == up)
 	{
 		 return new ray((intersectPt + normal * 0.001f), pt);
 	}
-	if(equalEpsilonVec(normal, -up, 0.001f))
+	if(normal == -up)
 	{
 		 return new ray((intersectPt + normal * 0.001f), -pt);
 
