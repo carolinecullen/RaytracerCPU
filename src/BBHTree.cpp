@@ -176,57 +176,89 @@ vector<Object *> BBHTree::treeDecend(BNode *node, const ray &ray)
 		return node->objs;
 	}
 	
-	if (node->boundBox.intersect(ray) != 0) 
+	if (node->boundBox.intersect(ray) != -1) 
     {
 		if (node->left != NULL) 
         {
-            if (node->left->boundBox.intersect(ray) != 0) 
+            if (node->left->boundBox.intersect(ray) != -1) 
             {
 			    vector<Object*> lReturn = treeDecend(node->left, ray);
                 if (node->right != NULL) 
                 {
-                    if (node->right->boundBox.intersect(ray) != 0) 
+                    if (node->right->boundBox.intersect(ray) != -1) 
                     {
+                        // cout << "Bounding box in right subtree intersection: " << endl;
+                        // cout << "--- max:" << node->right->boundBox.max.x << " " << node->right->boundBox.max.y << " " << node->right->boundBox.max.z << " " << endl;
+                        // cout << "--- min:" << node->right->boundBox.min.x << " " << node->right->boundBox.min.y << " " << node->right->boundBox.min.z << endl << endl;
+
                         vector<Object*> rReturn = treeDecend(node->right, ray);
-                        rReturn.insert( rReturn.end(), lReturn.begin(), lReturn.end() );
+                        rReturn.insert(rReturn.end() , lReturn.begin(), lReturn.end() );
                         return rReturn;
                     }
                     else
                     {
+                        // cout << "Bounding box in left tree interstion but no right subtree intersection: " << endl;
+                        // cout << "--- max:" << node->left->boundBox.max.x << " " << node->left->boundBox.max.y << " " << node->left->boundBox.max.z << endl;
+                        // cout << "--- min:" << node->left->boundBox.min.x << " " << node->left->boundBox.min.y << " " << node->left->boundBox.min.z << endl << endl;
                         return lReturn;
                     }
                 }
                 else
                 {
+                    // cout << "Bounding box in left tree interstion cuz right is null: " << endl;
+                    // cout << "--- max:" << node->left->boundBox.max.x << " " << node->left->boundBox.max.y << " " << node->left->boundBox.max.z << endl;
+                    // cout << "--- min:" << node->left->boundBox.min.x << " " << node->left->boundBox.min.y << " " << node->left->boundBox.min.z << endl << endl;
                     return lReturn;
                 }
             }
             else if (node->right != NULL) 
             {
-                if (node->right->boundBox.intersect(ray) != 0) 
+                if (node->right->boundBox.intersect(ray) != -1) 
                 {
-                     return treeDecend(node->right, ray);
+                    // cout << "Bounding box no left tree interstion but right subtree intersection: " << endl;
+                    // cout << "--- max:" << node->right->boundBox.max.x << " " << node->right->boundBox.max.y << " " << node->right->boundBox.max.z << endl;
+                    // cout << "--- min:" << node->right->boundBox.min.x << " " << node->right->boundBox.min.y << " " << node->right->boundBox.min.z << endl << endl;
+                    return treeDecend(node->right, ray);
                 }
                 else
                 {
+                    // cout << "Right node exists but no intersections: " << endl;
+                    // cout << "--- max:" << node->boundBox.max.x << " " << node->boundBox.max.y << " " << node->boundBox.max.z << " " << endl;
+                    // cout << "--- min:" << node->boundBox.min.x << " " << node->boundBox.min.y << " " << node->boundBox.min.z << " " << endl << endl;
                     return node->objs;
                 }
             }
             else
             {
+                // cout << "left tree is not null but no intersections: " << endl;
+                // cout << "--- max:" << node->boundBox.max.x << " " << node->boundBox.max.y << " " << node->boundBox.max.z << endl;
+                // cout << "--- min:" << node->boundBox.min.x << " " << node->boundBox.min.y << " " << node->boundBox.min.z << endl << endl;
                 return node->objs;
             }
 		}
         if (node->right != NULL) 
         {
-            if (node->right->boundBox.intersect(ray) != 0) 
+            if (node->right->boundBox.intersect(ray) != -1) 
             {
-                 return treeDecend(node->right, ray);
+                // cout << "right subtrees intersection: " << endl;
+                // cout << "--- max:" << node->right->boundBox.max.x << " " << node->right->boundBox.max.y << " " << node->right->boundBox.max.z << endl;
+                // cout << "--- min:" << node->right->boundBox.min.x << " " << node->right->boundBox.min.y << " " << node->right->boundBox.min.z << endl << endl;
+                return treeDecend(node->right, ray);
+            }
+            else
+            {
+                // cout << "right subtrees is not null but no intersection: " << endl;
+                // cout << "--- max:" << node->boundBox.max.x << " " << node->boundBox.max.y << " " << node->boundBox.max.z << endl;
+                // cout << "--- min:" << node->boundBox.min.x << " " << node->boundBox.min.y << " " << node->boundBox.min.z << endl << endl;
+                return node->objs;
             }
         }
 	}
     else
     {
+        // cout << "both subtrees are null: " << endl;
+        // cout << "--- max:" << node->boundBox.max.x << " " << node->boundBox.max.y << " " << node->boundBox.max.z << endl;
+        // cout << "--- min:" << node->boundBox.min.x << " " << node->boundBox.min.y << " " << node->boundBox.min.z << endl << endl;
         return node->objs;
     }
 

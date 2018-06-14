@@ -481,32 +481,68 @@ ray* Tracer::calcRefractionRay(vec3 rayDirection, vec3 &normVec, vec3 intersectP
 	return (new ray((intersectPt + (refractVec * 0.001f)), refractVec));
 }
 
-// FLAG :: 1 - fresnel, 2 - beers, 3 - bounding box
-void Tracer::traceRays(int flag, int samples)
+// FLAG :: 1 - fresnel, 2 - beers, 3 - bounding box, 4 - gi, 5 - focalpt
+void Tracer::traceRays(int flag, int samples, string fileinput)
 {
 
 	const int numChannels = 3;
  	const glm::ivec2 size = glm::ivec2(width, height);
- 	const string fileName = "output.png";
+ 	const string fileName = fileinput;
 	unsigned char *data = new unsigned char[size.x * size.y * numChannels];
 
 	for (int j = 0; j < size.y; ++ j)
 	{
 	    for (int i = 0; i < size.x; ++ i)
 	    {
-			float pixelX = (float)((-0.5) + ((i + 0.5)/width));
-			float pixelY = (float)((-0.5) + ((j + 0.5)/height));
+	    	if (flag == 5)
+	    	{
+				for (int n = 0; n < 5; ++ n)
+				{
+				    for (int m = 0; m < 5; ++ m)
+				    {
+						float pixelX = (float)((-0.5) + ((i + 0.5)/width));
+						float pixelY = (float)((-0.5) + ((j + 0.5)/height));
 
-			vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
-			vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
-			ray *r = new ray(scene->cam->location, dir);
+						vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
+						vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
+						ray *r = new ray(scene->cam->location, dir);
 
-			float tf = 0.f;
-			vec3 color = getColor(r, 6, false, flag, tf, 2, samples);
-			data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
-	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
-	        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
-			delete r;
+						float angle = (rand() / (float) RAND_MAX) * (2.f*3.14159f);
+						float radius = (rand() / (float) RAND_MAX);
+						vec2 circPoint(cos(angle) * radius, sin(angle) * radius);
+						vec3 apertureOffset(circPoint[0] * scene->aperture, circPoint[1] * scene->aperture, 0.0f);
+						r->location += apertureOffset;
+						r->direction *= scene->focalLength;
+						r->direction -= apertureOffset;
+						r->direction = normalize(r->direction);
+
+						float tf = 0.f;
+						vec3 color = getColor(r, 6, false, flag, tf, 2, samples);
+						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
+				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
+						delete r;
+					}
+				}
+	    	}
+
+	    	else
+	    	{
+	    		float pixelX = (float)((-0.5) + ((i + 0.5)/width));
+				float pixelY = (float)((-0.5) + ((j + 0.5)/height));
+
+				vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
+				vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
+				ray *r = new ray(scene->cam->location, dir);
+
+				float tf = 0.f;
+				vec3 color = getColor(r, 6, false, flag, tf, 2, samples);
+				data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
+		        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
+		        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
+				delete r;
+	    	}
+
 				
 		}
 	}
@@ -594,6 +630,7 @@ void Tracer::castRays()
 			vec3 w = normalize((scene->cam->lookat) - (scene->cam->location));
 			vec3 dir = normalize(((float)pixelX * scene->cam->right) + ((float)pixelY * scene->cam->up) + w*(1.0f));
 			ray *r = new ray(scene->cam->location, dir);
+
 
 
 			float retVal = numeric_limits<float>::max();

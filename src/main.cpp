@@ -12,7 +12,7 @@ using namespace glm;
 
 int main(int argc, char** argv)
 {
-	if(argc < 3 || argc > 7)
+	if(argc < 3 || argc > 10)
 	{
 		cout << "Invalid run commands." << endl;
 		cout << "Choose raycast, sceneinfo, pixelray, firsthit with the proper parameters." << endl;
@@ -26,11 +26,13 @@ int main(int argc, char** argv)
 	int flagParam = 0;
 	int gi_samples = 64;
 	bool Bounding = false;
+	string output = "";
+	glm::vec3 cameraPos;
 	if(strcmp(argv[1], "render") == 0)
 	{
-		if(argc == 6 || argc == 5 || argc == 7)
+		if(argc == 6 || argc == 5 || argc == 7 || argc==8 || argc==9 || argc == 10)
 		{
-			if(argc == 6 || argc==7)
+			if(argc > 5)
 			{
 				string flag(argv[5]);
 				if(argv[5][0] == '-')
@@ -45,6 +47,89 @@ int main(int argc, char** argv)
 					{
 						Bounding = true;
 						flagParam = 3;
+					}
+					else if(flag.compare("focal") == 0)
+					{
+						flagParam = 5;
+						float aperture = 0.f;
+						float focal = 0.f;
+						vector<float> camVals;
+
+						if(argc < 8)
+						{
+							cout << "expected focal length and aperture size" << endl;
+						}
+						else
+						{
+							string flagGI(argv[6]);
+							flagGI = flagGI.substr(1);
+							if(argv[6][0] == '-')
+							{
+								string flagGIcheck = flagGI.substr(0, 12);
+								if(flagGIcheck.compare("focalLength=") == 0)
+								{
+									focal = stof(flagGI.substr(12));
+								}
+								flagGIcheck = flagGI.substr(0, 9);
+								if(flagGIcheck.compare("aperture=") == 0)
+								{
+									aperture = stof(flagGI.substr(9));
+								}
+							}
+
+							string newflagGI(argv[7]);
+							newflagGI = newflagGI.substr(1);
+							if(argv[7][0] == '-')
+							{
+								string flagGIcheck = newflagGI.substr(0, 12);
+								if(flagGIcheck.compare("focalLength=") == 0)
+								{
+									focal = stof(newflagGI.substr(12));
+								}
+								flagGIcheck = newflagGI.substr(0, 9);
+								if(flagGIcheck.compare("aperture=") == 0)
+								{
+									aperture = stof(newflagGI.substr(9));
+								}
+							}
+
+							if(argc >= 9)
+							{
+								if(argv[8][0] == '-')
+								{
+									string newflagGI(argv[8]);
+									string flagGIcheck = newflagGI.substr(0, 8);
+									if(flagGIcheck.compare("-camera=") == 0)
+									{
+										camVals = Parse::getFloats(newflagGI.substr(8));
+										if (camVals.size() == 3)
+										{
+											cameraPos = vec3(camVals[0], camVals[1], camVals[2]);
+										}
+										else
+										{
+											cout << "Invalid camera values" << endl;
+										}
+									}
+								}
+							}
+
+							if(argc >= 10)
+							{
+								if(argv[9][0] == '-')
+								{
+									string newflagGI(argv[9]);
+									string flagGIcheck = newflagGI.substr(0, 8);
+									if(flagGIcheck.compare("-output=") == 0)
+									{
+										output = newflagGI.substr(8);
+									}
+								}
+							}
+
+							s->aperture = aperture;
+							s->focalLength = focal;
+						}
 					}
 					else if(flag.compare("gi") == 0)
 					{
@@ -91,8 +176,21 @@ int main(int argc, char** argv)
 				return -1;
 			}
 
+
+			if(flagParam == 5 && argc == 9)
+			{
+				s->cam->location.x = cameraPos.x;
+				s->cam->location.y = cameraPos.y;
+				s->cam->location.z = cameraPos.z;
+			}
+
+			if(output == "")
+			{
+				output = "output.png";
+			}
+
 			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
-			tracer->traceRays(flagParam, gi_samples);
+			tracer->traceRays(flagParam, gi_samples, output);
 		}
 		else
 		{

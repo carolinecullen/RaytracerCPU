@@ -18,7 +18,7 @@ class Tracer {
 		Tracer(Scene *, int, int);
 
 		void castRays();
-		void traceRays(int, int);
+		void traceRays(int, int, std::string);
 		void printrays(int, int);
 		glm::vec3 getColor(ray*, int, bool, int, float&, int, int);
 		void traceRaysSuper(int);
