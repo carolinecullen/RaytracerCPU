@@ -547,7 +547,15 @@ void Tracer::traceRays(int flag, int samples, string fileinput)
 		}
 	}
 
-	stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
+	if(fileName == "")
+	{
+		const string f = "output.png";
+		stbi_write_png(f.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
+	}
+	else
+	{
+		stbi_write_png(fileName.c_str(), size.x, size.y, numChannels, data, size.x * numChannels);
+	}
 	
 }
 

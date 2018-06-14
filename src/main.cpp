@@ -99,6 +99,21 @@ int main(int argc, char** argv)
 								{
 									string newflagGI(argv[8]);
 									string flagGIcheck = newflagGI.substr(0, 8);
+									if(flagGIcheck.compare("-output=") == 0)
+									{
+										output = newflagGI.substr(8);
+									}
+								}
+							}
+
+							// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+							// ALWAYS MAKE SURE THAT CAMERA TWO IS LAST PARAMETER
+							if(argc >= 10)
+							{
+								if(argv[9][0] == '-')
+								{
+									string newflagGI(argv[9]);
+									string flagGIcheck = newflagGI.substr(0, 8);
 									if(flagGIcheck.compare("-camera=") == 0)
 									{
 										camVals = Parse::getFloats(newflagGI.substr(8));
@@ -114,18 +129,7 @@ int main(int argc, char** argv)
 								}
 							}
 
-							if(argc >= 10)
-							{
-								if(argv[9][0] == '-')
-								{
-									string newflagGI(argv[9]);
-									string flagGIcheck = newflagGI.substr(0, 8);
-									if(flagGIcheck.compare("-output=") == 0)
-									{
-										output = newflagGI.substr(8);
-									}
-								}
-							}
+							
 
 							s->aperture = aperture;
 							s->focalLength = focal;
@@ -176,19 +180,13 @@ int main(int argc, char** argv)
 				return -1;
 			}
 
-
-			if(flagParam == 5 && argc == 9)
+			if(flagParam == 5 && argc >= 10)
 			{
 				s->cam->location.x = cameraPos.x;
 				s->cam->location.y = cameraPos.y;
 				s->cam->location.z = cameraPos.z;
 			}
-
-			if(output == "")
-			{
-				output = "output.png";
-			}
-
+			
 			Tracer *tracer = new Tracer(s, stoi(argv[3]), stoi(argv[4]));
 			tracer->traceRays(flagParam, gi_samples, output);
 		}
