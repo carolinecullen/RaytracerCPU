@@ -496,9 +496,10 @@ void Tracer::traceRays(int flag, int samples, string fileinput)
 	    {
 	    	if (flag == 5)
 	    	{
-				for (int n = 0; n < 5; ++ n)
+	    		vec3 color = vec3(0.f);
+				for (int n = 0; n < 15; ++ n)
 				{
-				    for (int m = 0; m < 5; ++ m)
+				    for (int m = 0; m < 15; ++ m)
 				    {
 						float pixelX = (float)((-0.5) + ((i + 0.5)/width));
 						float pixelY = (float)((-0.5) + ((j + 0.5)/height));
@@ -517,13 +518,15 @@ void Tracer::traceRays(int flag, int samples, string fileinput)
 						r->direction = normalize(r->direction);
 
 						float tf = 0.f;
-						vec3 color = getColor(r, 6, false, flag, tf, 2, samples);
-						data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
-				        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
+						color += getColor(r, 6, false, flag, tf, 2, samples);
 						delete r;
 					}
 				}
+
+				color = color/((float)(225));
+				data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 0] = (unsigned int) round((clamp(color.x,0.f,1.f)) * 255.f);
+		        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 1] = (unsigned int) round((clamp(color.y,0.f,1.f)) * 255.f);
+		        data[(size.x * numChannels) * (size.y - 1 - j) + numChannels * i + 2] = (unsigned int) round((clamp(color.z,0.f,1.f)) * 255.f);
 	    	}
 
 	    	else
