@@ -1,0 +1,65 @@
+<html>
+<head>
+   <title>Raytracer</title>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+   <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="container">
+
+   <div class="page-header">
+   <center>
+      <h1 style="color:DodgerBlue;margin-left:60px;">RAYTRACER<br><small>Caroline Cullen</small></h1>
+   </center>
+   </div>
+
+      <center><img src="depthoffield2.jpg" width=1280 height=960></center></br>
+
+   <div style="border:2px solid Violet; background-color:rgba(255, 255, 150, 0.5);" class="well well-lrg">
+      <h1>Description</h1>
+      <p>Tracin' some rays.</p>
+   </div>
+
+   <div style="border:2px solid Violet; background-color:rgba(125, 255, 150, 0.5);" class="well well-lrg">
+      <h1>Working features....</h1>
+      <ul>
+         <li>Depth of Field</li>
+         <li>Monte Carlo Global Illumination</li>
+         <li>Super Sampling</li>
+         <li>Reflection</li>
+         <li>Refraction</li>
+         <li>Transformation</li>
+         <li>Beers Law</li>
+         <center><img src="output2.jpg" width=700 height=525></center></br>
+      </ul>
+      
+   </div>
+
+   <div style="border:2px solid Violet; background-color:rgba(155, 255, 255, 0.5);" class="well well-lrg">
+      <h1>Final Project</h1>
+      <center><img src="final.gif" width=700 height=525></center></br>
+      <p>Created depth of field as well as animation with depth of field. I did the depth of field using a circular aperture and by taking 5 random samples on that aperture per pixel on the image and then also gave the image a focal length of where the aperture would focus to. I then used that same technigue was with super sampling to average the 5 color samples on the aperture. The python script was done using the subprocess library and then the gif was stitched together using ffmpeg. </p>
+      
+   </div>
+
+   <div style="border:2px solid Violet; background-color:rgba(25, 99, 255, 0.5);" class="well well-lrg">
+      <h1>Running Parameters for Final Project</h1>
+      <ul>
+         <li> "-focal" to run the depth of field program (required) </li>
+         <li> "-aperture=" to set the aperture size (required) </li>
+         <li> "-focalLength=" to set the focal length (required) </li>
+         <li> "-camera=0.0,0.0,0.0" to change the camera position (optional) </li>
+         <li> "-output=" to change the output file name (optional and defaults to output.png) </li>
+      </ul>
+   </div>
+
+   <div  style="border:2px solid Violet; background-color:rgba(255, 99, 71, 0.5);" class="well well-lrg">
+
+      <h1>Software Engineering Cleanup</h1>
+      <p> I wrote a diagnostics class for help with debugging as well as abstracted out the objects with an object class and virtual methods for each object to override. </p>
+
+   </div>
+
+</body>
+
+</html>
