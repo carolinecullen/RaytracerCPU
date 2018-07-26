@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	if(argc < 3 || argc > 10)
 	{
 		cout << "Invalid run commands." << endl;
-		cout << "Choose raycast, sceneinfo, pixelray, firsthit with the proper parameters." << endl;
+		cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 		return -1;
 	}
 
@@ -192,7 +192,8 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height>" << endl;
+			cout << "Invalid run commands." << endl;
+			cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 			return -1;
 		}
 	}
@@ -200,7 +201,8 @@ int main(int argc, char** argv)
 	{
 		if(argc != 5)
 		{
-			cout << "Invalid run commands: ./raytrace raycast <input_filename> <width> <height>" << endl;
+			cout << "Invalid run commands." << endl;
+			cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 			return -1;
 		}
 
@@ -233,7 +235,8 @@ int main(int argc, char** argv)
 	{
 		if(argc != 7)
 		{
-			cout << "Invalid run commands: ./raytrace pixelray <input_filename> <width> <height> <x> <y>" << endl;
+			cout << "Invalid run commands." << endl;
+			cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 			return -1;
 		}
 
@@ -249,7 +252,8 @@ int main(int argc, char** argv)
 	{
 		if(argc != 7)
 		{
-			cout << "Invalid run commands: ./raytrace firsthit <input_filename> <width> <height> <x> <y>" << endl;
+			cout << "Invalid run commands." << endl;
+			cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 			return -1;
 		}
 
@@ -278,7 +282,8 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			cout << "Invalid run commands: ./raytrace render <input_filename> <width> <height> <x> <y>" << endl;
+			cout << "Invalid run commands." << endl;
+			cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 			return -1;
 		}
 
@@ -298,7 +303,8 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			cout << "Invalid run commands: ./raytrace printrays <input_filename> <width> <height> <x> <y>" << endl;
+			cout << "Invalid run commands." << endl;
+			cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 			return -1;
 		}
 
@@ -306,7 +312,8 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		cout << "Invalid command: use pixelcolor, render, raycast, sceneinfo, pixelray, firsthit run with proper parameters." << endl;
+		cout << "Invalid run commands." << endl;
+		cout << "Usage: \n\t./raytrace render <file.pov> <width> <height> [optional flags]\n\t./raytrace sceneinfo <input_filename>\n\t./raytrace pixelray <input_filename> <width> <height> <x> <y>\n\t./raytrace firsthit <input_filename> <width> <height> <x> <y>\n" << endl;
 		return -1;
 	}
 
