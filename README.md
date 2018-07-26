@@ -45,11 +45,11 @@ Command line arguments:
 
 * Monte Carlo Global Illumination
 
-![gi](webite/output2.jpg)
+![gi](website/output2.jpg)
 
 * Depth of field 
 
-![gif_dof](webite/15sample.gif)
+![gif_dof](website/15sample.gif)
 
-![jpg_dof](webite/depthoffield2.gif)
+![jpg_dof](website/depthoffield2.gif)
 
