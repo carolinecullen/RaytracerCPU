@@ -30,7 +30,7 @@ Implementation features include:
 ## Running Raytracer
 
 Command line arguments: 
-* `render <input_file.pov> <width> <height> [-flags]` - render the actual image to standard out
+* `render <input_file.pov> <width> <height> [-flags]` - render the actual image to output.png
 * `sceneinfo <input_file.pov>` - gives various info from the scene
 
 * `-fresnel` - for fresnel affect
@@ -41,5 +41,15 @@ Command line arguments:
 * `-ss=N` - super sampling with optional samples
 
 
+## Example Images
 
+* Monte Carlo Global Illumination
+
+![gi](webite/output2.jpg)
+
+* Depth of field 
+
+![gif_dof](webite/15sample.gif)
+
+![jpg_dof](webite/depthoffield2.gif)
 
