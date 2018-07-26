@@ -30,7 +30,7 @@ Implementation features include:
 ## Running Raytracer
 
 Command line arguments: 
-* `render <input_file.pov> <width> <height> [-flags]` 
+* `render <input_file.pov> <width> <height> [-flags]` - render the actual image to standard out
 * `sceneinfo <input_file.pov>` - gives various info from the scene
 
 * `-fresnel` - for fresnel affect
