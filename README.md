@@ -37,7 +37,7 @@ Command line arguments:
 * `-beers` - for beers law
 * `-sds` - for adding spacial data structure
 * `-gi [-gi_samples=N]` - for adding global illumination with optional sample size (default 2)
-* `-focal [-focallength=N] [-aperture=N] [-output=something.png] [-camera=N]`  - depth of field
+* `-focal [-focallength=N] [-aperture=N] [-output=something.png] [-camera=N]`  - depth of field has the option for different focal lengths, aperture sizes, output files, and camera positions
 * `-ss=N` - super sampling with optional samples
 
 
@@ -51,5 +51,5 @@ Command line arguments:
 
 ![gif_dof](website/15sample.gif)
 
-![jpg_dof](website/depthoffield2.gif)
+![jpg_dof](website/depthoffield2.jpg)
 
