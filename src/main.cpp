@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 	glm::vec3 cameraPos;
 	if(strcmp(argv[1], "render") == 0)
 	{
-		if(argc == 6 || argc == 5 || argc == 7 || argc==8 || argc==9 || argc == 10)
+		if(argc == 5 || argc == 6 || argc == 7 || argc==8 || argc==9 || argc == 10)
 		{
 			if(argc > 5)
 			{
