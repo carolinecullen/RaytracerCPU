@@ -6,7 +6,7 @@
 #include "Sphere.hpp"
 #include "Plane.hpp"	
 #include "Triangle.hpp"
-#include "glm/gtc/matrix_transform.hpp"	
+#include "../glm/glm/gtc/matrix_transform.hpp"
 using namespace std;
 using namespace glm;
 

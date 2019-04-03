@@ -6,7 +6,7 @@ class BBH;
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <glm/glm.hpp>
+#include "../glm/glm/glm.hpp"
 #include "Ray.hpp"
 
 class Object 

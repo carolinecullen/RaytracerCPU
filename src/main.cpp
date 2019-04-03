@@ -1,7 +1,7 @@
 #include "Parse.hpp"
 #include <iostream>
 #include <string>
-#include <glm/glm.hpp>
+#include "../glm/glm/glm.hpp"
 #include <stdio.h>
 #include <string.h>
 #include "Tracer.hpp"

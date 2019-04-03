@@ -1,6 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
-#include <glm/glm.hpp>
+#include "../glm/glm/glm.hpp"
 #include <vector>
 #include "Camera.hpp"
 #include "Lighting.hpp"

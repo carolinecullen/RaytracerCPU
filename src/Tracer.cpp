@@ -8,7 +8,7 @@
 #include "Triangle.hpp"
 #include "Diagnostic.hpp"
 #include "Box.hpp"
-#include "glm/gtc/matrix_transform.hpp"	
+#include "../glm/glm/gtc/matrix_transform.hpp"
 
 
 using namespace std; 

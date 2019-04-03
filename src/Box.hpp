@@ -2,7 +2,7 @@
 #define BOX_H
 
 class BBH;
-#include <glm/glm.hpp>
+#include "../glm/glm/glm.hpp"
 #include "Object.hpp"
 #include "Ray.hpp"
 

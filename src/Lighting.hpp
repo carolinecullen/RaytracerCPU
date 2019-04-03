@@ -3,7 +3,7 @@
 
 #include <string>
 #include <sstream>
-#include <glm/glm.hpp>
+#include "../glm/glm/glm.hpp"
 
 class Lighting
 {
